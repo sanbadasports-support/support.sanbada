@@ -15,7 +15,7 @@ REPO = "sanbadasports-support/support.sanbada"
 BRANCH = "main"
 FILE = "data/content.json"
 SITE_URL = "https://support.sanbadasports.co.kr/"
-# 아래 두 값은 Cloudflare Access 설정 후 채움 (대시보드 → Worker → 설정 → 변수)
-ACCESS_TEAM = ""   # 예: sanbada.cloudflareaccess.com
-ACCESS_AUD = ""    # Access 애플리케이션의 Application Audience (AUD) 태그
+# Access 값 (2026-11-26 설정: 허용 메일 = @sanbadasports.co.kr)
+ACCESS_TEAM = "crimson-recipe-4cd1.cloudflareaccess.com"   # Zero Trust 팀 도메인
+ACCESS_AUD = "abb0733d63d2c479e7463b23ec146c986d65a9c6d3d2830226590d0344b9a96e"   # sanbada-admin Access 앱 AUD
 # 비밀값(대시보드에서 「암호화」로 추가, 이 파일에 적지 말 것): GITHUB_TOKEN
