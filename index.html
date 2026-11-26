@@ -1,0 +1,541 @@
+<title>support.sanbada · 산바다스포츠 지원</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<!-- 글꼴: 애플 기기는 SF Pro + Apple SD Gothic Neo(기기 내장), 그 밖의 기기는 Pretendard(애플 글꼴과 비슷한 무료 글꼴) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+/* Layout: 애플 지원 사이트처럼 넓은 여백의 한 단 구성. 홈(검색+브랜드) → 브랜드(문제·시리얼·자료) → 4단계 접수 → 조회 */
+:root{
+  --bg:#f5f6f7; --surface:#ffffff; --ink:#15191d; --muted:#5b646d; --line:#e1e4e8;
+  --accent:#0b6b66; --accent-soft:#e3f1ef; --accent-ink:#ffffff;
+  --warn:#a8501a; --warn-soft:#fbeee4; --ok:#2f7a3b;
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Apple SD Gothic Neo","Pretendard Variable",Pretendard,"Malgun Gothic",system-ui,sans-serif;
+  --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace;
+  --r:14px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1214; --surface:#171b1e; --ink:#eceff1; --muted:#9aa3ab; --line:#2a3035;
+  --accent:#43b5ab; --accent-soft:#16302d; --accent-ink:#06201d; --warn:#f0a070; --warn-soft:#3a2416; --ok:#7cc488; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1214; --surface:#171b1e; --ink:#eceff1; --muted:#9aa3ab; --line:#2a3035;
+  --accent:#43b5ab; --accent-soft:#16302d; --accent-ink:#06201d; --warn:#f0a070; --warn-soft:#3a2416; --ok:#7cc488; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+a{color:var(--accent)}
+h1,h2,h3{text-wrap:balance;line-height:1.3;margin:0}
+.wrap{max-width:1040px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.narrow{max-width:760px}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:20px;height:56px}
+.logo{font-weight:700;letter-spacing:-.01em;color:var(--ink);text-decoration:none;white-space:nowrap}
+.logo span{color:var(--muted);font-weight:500;margin-left:6px}
+nav.main{display:flex;gap:4px;margin-left:auto;overflow-x:auto}
+nav.main a{color:var(--muted);text-decoration:none;font-size:14px;padding:6px 10px;border-radius:8px;white-space:nowrap}
+nav.main a[aria-current="page"]{color:var(--ink);background:var(--bg)}
+.demo{background:var(--accent-soft);color:var(--ink);font-size:14px;text-align:center;padding:8px 16px}
+main{padding-block:0 80px}
+.hero{text-align:center;padding-block:56px 32px}
+.hero h1{font-size:clamp(28px,5vw,44px);font-weight:700;letter-spacing:-.02em}
+.hero p{color:var(--muted);margin:8px 0 0}
+.search{position:relative;max-width:620px;margin:28px auto 0}
+.search input{width:100%;font:inherit;font-size:17px;padding:14px 18px 14px 46px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.search svg{position:absolute;left:17px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.search input:focus,input:focus,textarea:focus,select:focus,button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.results{max-width:620px;margin:10px auto 0;text-align:left}
+.sec{padding-block:36px 0}
+.sec>h2{font-size:22px;font-weight:600;margin-bottom:18px}
+.brands{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.brand{display:flex;flex-direction:column;justify-content:space-between;gap:20px;min-height:116px;padding:18px;border-radius:var(--r);background:var(--surface);border:1px solid var(--line);color:var(--ink);text-decoration:none;transition:border-color .15s,transform .15s}
+.brand:hover{border-color:var(--accent);transform:translateY(-2px)}
+.brand b{font-size:19px;font-weight:700;letter-spacing:-.01em}
+.brand small{color:var(--muted);font-size:13px}
+.ways{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.way{padding:20px;border-radius:var(--r);background:var(--surface);border:1px solid var(--line)}
+.way h3{font-size:17px;font-weight:600;margin-bottom:6px}
+.way p{margin:0 0 12px;color:var(--muted);font-size:14px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;font:inherit;font-size:15px;font-weight:600;padding:11px 20px;border-radius:999px;border:1px solid transparent;background:var(--accent);color:var(--accent-ink);cursor:pointer;text-decoration:none}
+.btn.ghost{background:transparent;color:var(--accent);border-color:var(--line)}
+.btn.small{font-size:14px;padding:7px 14px}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.faq{border-top:1px solid var(--line)}
+.faq details{border-bottom:1px solid var(--line)}
+.faq summary{cursor:pointer;list-style:none;padding:16px 36px 16px 0;position:relative;font-weight:500}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";position:absolute;right:6px;top:12px;font-size:22px;color:var(--muted);font-weight:400}
+.faq details[open] summary::after{content:"−"}
+.faq .ans{padding:0 0 18px;color:var(--ink);white-space:pre-line;max-width:65ch}
+.faq .ans .meta{display:block;margin-top:10px;font-size:13px;color:var(--muted)}
+.tag{display:inline-block;font-size:12px;font-weight:600;color:var(--accent);background:var(--accent-soft);padding:2px 8px;border-radius:6px;margin-right:6px;vertical-align:2px}
+.crumb{font-size:14px;color:var(--muted);padding-top:28px}
+.crumb a{text-decoration:none}
+.bhead{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:16px;padding-block:14px 8px}
+.bhead h1{font-size:clamp(28px,5vw,40px);font-weight:700;letter-spacing:-.02em}
+.bhead p{margin:4px 0 0;color:var(--muted)}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-top:20px;overflow-x:auto}
+.tabs button{font:inherit;font-size:15px;background:none;border:0;border-bottom:2px solid transparent;padding:12px 14px;color:var(--muted);cursor:pointer;white-space:nowrap}
+.tabs button[aria-selected="true"]{color:var(--ink);border-color:var(--ink);font-weight:600}
+.panel{padding-top:24px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.chip{font:inherit;font-size:14px;padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.serialimg{background:#fff;border-radius:var(--r);border:1px solid var(--line);overflow:hidden;max-width:640px}
+.serialimg img{display:block;width:100%}
+.note{padding:14px 16px;border-radius:12px;background:var(--accent-soft);font-size:14px}
+.note.warn{background:var(--warn-soft);color:var(--ink)}
+.docs{display:grid;gap:10px;max-width:640px}
+.doc{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 16px;border-radius:12px;background:var(--surface);border:1px solid var(--line)}
+.doc span{color:var(--muted);font-size:13px;white-space:nowrap}
+.cta{margin-top:32px;padding:24px;border-radius:var(--r);background:var(--surface);border:1px solid var(--line);display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between}
+.cta h3{font-size:18px;font-weight:600}
+.cta p{margin:2px 0 0;color:var(--muted);font-size:14px}
+/* 접수 마법사 */
+.steps{display:flex;gap:6px;margin:28px 0 8px}
+.steps i{flex:1;height:4px;border-radius:4px;background:var(--line)}
+.steps i.on{background:var(--accent)}
+.stepname{font-size:13px;color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:24px;margin-top:16px}
+.card h2{font-size:22px;font-weight:600;margin-bottom:4px}
+.card .sub{color:var(--muted);margin:0 0 20px;font-size:14px}
+.field{display:grid;gap:6px;margin-bottom:18px}
+.field label,.field .lbl{font-weight:600;font-size:15px}
+.req{color:var(--warn);font-weight:600;margin-left:2px}
+.hint{font-size:13px;color:var(--muted)}
+input[type=text],input[type=tel],input[type=email],input[type=date],textarea,select{font:inherit;font-size:16px;padding:11px 13px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);width:100%}
+textarea{min-height:110px;resize:vertical}
+.mono{font-family:var(--mono);letter-spacing:.02em}
+.choice{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.opt{display:block;padding:14px 16px;border-radius:12px;border:1px solid var(--line);background:var(--bg);cursor:pointer;text-align:left;font:inherit;color:var(--ink)}
+.opt b{display:block;font-size:15px}
+.opt small{color:var(--muted);font-size:13px}
+.opt[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);box-shadow:inset 0 0 0 1px var(--accent)}
+.photos{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.drop{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center;min-height:130px;padding:12px;border-radius:12px;border:1.5px dashed var(--line);background:var(--bg);cursor:pointer;font-size:14px;overflow:hidden}
+.drop input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.drop img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.drop.has{border-style:solid;border-color:var(--accent)}
+.drop .x{font-size:12px;color:var(--muted)}
+.drop.need{border-color:var(--warn)}
+.tips{margin:8px 0 0;padding:16px;border-radius:12px;background:var(--accent-soft)}
+.tips h4{margin:0 0 6px;font-size:14px}
+.tips ul{margin:0;padding-left:18px;font-size:14px}
+.nav-btns{display:flex;justify-content:space-between;gap:10px;margin-top:8px;flex-wrap:wrap}
+.err{color:var(--warn);font-size:14px;min-height:1.4em;margin-top:4px}
+.consent{font-size:13px;color:var(--muted);background:var(--bg);border-radius:10px;padding:12px 14px;max-height:0;overflow:hidden;transition:max-height .2s}
+.consent.open{max-height:300px;overflow:auto;margin-bottom:10px}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:15px}
+.check input{width:20px;height:20px;margin-top:3px;accent-color:var(--accent)}
+.review{display:grid;grid-template-columns:130px 1fr;gap:8px 16px;font-size:15px}
+.review dt{color:var(--muted)} .review dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.done{text-align:center;padding-block:40px 10px}
+.ticket{display:inline-block;font-family:var(--mono);font-size:30px;padding:10px 22px;border-radius:12px;background:var(--accent-soft);color:var(--accent);margin:14px 0 4px}
+.timeline{list-style:none;margin:24px auto 0;padding:0;max-width:460px;text-align:left}
+.timeline li{position:relative;padding:0 0 18px 30px}
+.timeline li::before{content:"";position:absolute;left:7px;top:8px;width:10px;height:10px;border-radius:50%;background:var(--line);border:2px solid var(--surface);box-shadow:0 0 0 1px var(--line)}
+.timeline li::after{content:"";position:absolute;left:12px;top:22px;bottom:0;width:1px;background:var(--line)}
+.timeline li:last-child::after{display:none}
+.timeline li.on::before{background:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.timeline li.now b{color:var(--accent)}
+.timeline small{display:block;color:var(--muted);font-size:13px}
+.flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;font-size:14px}
+.flow div{padding:14px;border-radius:12px;background:var(--surface);border:1px solid var(--line)}
+.flow b{display:block;margin-bottom:4px}
+.dealer-list{border:1px solid var(--line);border-radius:10px;margin-top:6px;overflow:hidden}
+.dealer-list button{display:block;width:100%;text-align:left;font:inherit;padding:10px 13px;background:var(--surface);border:0;border-bottom:1px solid var(--line);color:var(--ink);cursor:pointer}
+.dealer-list button:last-child{border-bottom:0}
+.ac{position:relative}.ac .dealer-list{position:absolute;left:0;right:0;top:100%;z-index:5;max-height:320px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.12)}
+.dealer-list small{margin-left:6px}
+a.doc{text-decoration:none;color:inherit}a.doc:hover{border-color:var(--accent)}
+.btn:disabled{opacity:.6;cursor:wait}
+input:disabled{opacity:.5}
+footer{border-top:1px solid var(--line);padding-block:24px;font-size:13px;color:var(--muted)}
+@media (max-width:560px){.review{grid-template-columns:1fr}.review dt{margin-top:6px}.card{padding:18px}.top .wrap{gap:10px}.logo span{display:none}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<header class="top"><div class="wrap">
+  <a class="logo" href="#home">support.sanbada<span>산바다스포츠 지원</span></a>
+  <nav class="main" aria-label="주 메뉴">
+    <a href="#home" data-nav="home">지원 홈</a>
+    <a href="#apply" data-nav="apply">A/S 접수</a>
+    <a href="#track" data-nav="track">진행 조회</a>
+  </nav>
+</div></header>
+<div class="demo" id="notice" hidden></div>
+<main id="app"></main>
+<footer><div class="wrap" id="foot">산바다스포츠 기술팀 · 서울시 강남구 강남대로 140길 46 G&amp;A 학동파크 1층 · 대표 02-555-5199 · 평일 09:00~18:00</div></footer>
+<script type="application/json" id="dealers-embed">[{"id":"11790862417","n":"(주) 더네이쳐홀딩스","r":"서울","a":"용산구"},{"id":"11790856794","n":"(주)굴리오","r":"경남","a":"김해시"},{"id":"11790845248","n":"(주)더랙","r":"대전","a":"동구"},{"id":"11790842522","n":"(주)바이크셀링","r":"경기","a":"수원시"},{"id":"11790862471","n":"(주)바이크스포츠","r":"경기","a":"고양시"},{"id":"11790841249","n":"(주)벨로스타","r":"서울","a":"마포구"},{"id":"11790838459","n":"(주)산바다스포츠","r":"서울","a":"강남구"},{"id":"11790831369","n":"(주)산바다스포츠","r":"서울","a":"영등포구"},{"id":"11790852045","n":"(주)산바다스포츠","r":"서울","a":"강남구"},{"id":"11790838332","n":"(주)수딩스포츠","r":"경기","a":"하남시"},{"id":"11790833360","n":"(주)수바이크","r":"충남","a":"천안시"},{"id":"11790833136","n":"(주)슬리피포테이토","r":"서울","a":"강남구"},{"id":"11790838353","n":"(주)엘에스네트웍스","r":"서울","a":"송파구"},{"id":"11790838509","n":"(주)와일드스포츠","r":"경기","a":"의정부시"},{"id":"11790831319","n":"(주)제이에스월드","r":"경기","a":"고양시"},{"id":"11790842507","n":"(주)커넥티드랩","r":"서울","a":"서초구"},{"id":"11790852113","n":"(주)케이한바이시클","r":"경기","a":"의왕시"},{"id":"11790862404","n":"(주)토마스컴파니","r":"서울","a":"중구"},{"id":"11790840962","n":"(주)페달링 군자점","r":"서울","a":"광진구"},{"id":"11790833274","n":"(주)하이파이브인터내셔널","r":"부산","a":"해운대구"},{"id":"11790842452","n":"(주)한국볼타","r":"서울","a":"종로구"},{"id":"11790851557","n":"(주)헬시온코리아","r":"서울","a":"송파구"},{"id":"11790838440","n":"1층 파더스코리아","r":"인천","a":"서구"},{"id":"11790833080","n":"22펠로톤","r":"서울","a":"마포구"},{"id":"11790862354","n":"365바이크","r":"경북","a":"문경시"},{"id":"11790831316","n":"4호공장","r":"제주","a":"제주시"},{"id":"11790833044","n":"911자전거","r":"서울","a":"용산구"},{"id":"11790842445","n":"AAC(와츠업사이클스튜디오)","r":"인천","a":"남동구"},{"id":"11790852205","n":"BBMTB망원점","r":"서울","a":"마포구"},{"id":"11790831149","n":"BC자전거(김포)","r":"경기","a":"김포시"},{"id":"11790849477","n":"BC자전거(당진점)","r":"충남","a":"당진시"},{"id":"11790842279","n":"Bike Cabin","r":"경남","a":"하동군"},{"id":"11790841154","n":"DS바이크","r":"대전","a":"서구"},{"id":"11790833142","n":"Kims Bike (킴스바이크)","r":"서울","a":"성동구"},{"id":"11790856626","n":"LSR사이클아카데미","r":"대구","a":"달서구"},{"id":"11790838394","n":"LoVelo","r":"서울","a":"성동구"},{"id":"11790833400","n":"MRMTB","r":"부산","a":"금정구"},{"id":"11790862474","n":"Max Bike","r":"전북","a":"전주시"},{"id":"11790856442","n":"NSR시흥배곧점","r":"경기","a":"시흥시"},{"id":"11790845281","n":"NSR의정부점","r":"경기","a":"의정부시"},{"id":"11790846862","n":"POWERWAYNUTRITION","r":"경남","a":"김해시"},{"id":"11790849452","n":"Palace Skateboards Seoul","r":"서울","a":"강남구"},{"id":"11790842371","n":"RMP스포츠","r":"서울","a":"영등포구"},{"id":"11790862331","n":"RPM자전거","r":"경기","a":"부천시"},{"id":"11790838373","n":"SNEBIKE","r":"경기","a":"하남시"},{"id":"11790842510","n":"STAGE 1(스테이지원)","r":"서울","a":"송파구"},{"id":"11790851986","n":"THE LAST BIKE","r":"경북","a":"구미시"},{"id":"11790856607","n":"THE캡틴","r":"서울","a":"마포구"},{"id":"11790838395","n":"VIVAROAD","r":"서울","a":"강동구"},{"id":"11790856507","n":"bbmtb제주","r":"제주","a":"제주시"},{"id":"11790838263","n":"be just","r":"서울","a":"구로구"},{"id":"11790833369","n":"bike tani","r":"경남","a":"진주시"},{"id":"11790846939","n":"boraum","r":"충남","a":"천안시"},{"id":"11790862440","n":"cyclus","r":"서울","a":"송파구"},{"id":"11790831339","n":"nsr전주점","r":"전북","a":"전주시"},{"id":"11790852096","n":"performerbike","r":"울산","a":"북구"},{"id":"11790833216","n":"pro-bikes","r":"부산","a":"금정구"},{"id":"11790833255","n":"가람바이크119","r":"전남","a":"목포시"},{"id":"11790849430","n":"간조미 자전거 제작소","r":"서울","a":"성동구"},{"id":"11790852041","n":"강C네자전거","r":"경남","a":"김해시"},{"id":"11790831314","n":"강변mtb","r":"서울","a":"마포구"},{"id":"11790841165","n":"거러카페","r":"경기","a":"화성시"},{"id":"11790856457","n":"검단 힐링두바퀴","r":"인천","a":"서구"},{"id":"11790856531","n":"경스바이크","r":"경기","a":"오산시"},{"id":"11790856701","n":"경태네 자전거 하남점","r":"경기","a":"하남시"},{"id":"11790849517","n":"고고바이크","r":"부산","a":"영도구"},{"id":"11790841069","n":"고덕바이크","r":"경기","a":"평택시"},{"id":"11790833231","n":"고덕바이크 싸이클링","r":"경기","a":"평택시"},{"id":"11790862366","n":"고도몰사이클","r":"","a":""},{"id":"11790841231","n":"고바이크","r":"대구","a":"동구"},{"id":"11790833367","n":"고블린자전거","r":"경기","a":"의정부시"},{"id":"11790862374","n":"골드휠자전거","r":"서울","a":"성동구"},{"id":"11790862454","n":"곰바이크","r":"서울","a":"강동구"},{"id":"11790841278","n":"곰바이크","r":"경남","a":"창원시"},{"id":"11790833325","n":"공성열프로바이크","r":"경남","a":"김해시"},{"id":"11790856549","n":"관양MTB","r":"경기","a":"안양시"},{"id":"11790849485","n":"광주자전거","r":"광주","a":"서구"},{"id":"11790841261","n":"구름자전거","r":"전남","a":"나주시"},{"id":"11790856521","n":"구미자전거","r":"경북","a":"구미시"},{"id":"11790849412","n":"구프로바이크","r":"부산","a":"강서구"},{"id":"11790831341","n":"굴림","r":"경기","a":"남양주시"},{"id":"11790849428","n":"굿바이크","r":"부산","a":"동래구"},{"id":"11790833143","n":"그린바이크","r":"강원","a":"동해시"},{"id":"11790856598","n":"그린바이크","r":"경남","a":"창원시"},{"id":"11790842486","n":"금고바이크 구미","r":"경북","a":"구미시"},{"id":"11790831183","n":"금천MTB","r":"서울","a":"금천구"},{"id":"11790856595","n":"기본","r":"경기","a":"김포시"},{"id":"11790849420","n":"기어스","r":"경기","a":"고양시"},{"id":"11790838513","n":"기흥인터내셔널","r":"서울","a":"용산구"},{"id":"11790842524","n":"길스포츠","r":"충북","a":"청주시"},{"id":"11790831276","n":"김성호바이크","r":"세종","a":"조치원읍"},{"id":"11790833227","n":"김영철자전거","r":"충북","a":"청주시"},{"id":"11790856624","n":"김해스캇","r":"경남","a":"김해시"},{"id":"11790851378","n":"김희태","r":"서울","a":"강남구"},{"id":"11790856627","n":"꼴통바이크","r":"경북","a":"포항시"},{"id":"11790842454","n":"꿈꾸는자전거","r":"경기","a":"고양시"},{"id":"11790852048","n":"나무컴즈","r":"경기","a":"안산시"},{"id":"11790862208","n":"나이스바이크","r":"경북","a":"경산시"},{"id":"11790856655","n":"나톰 NATOM","r":"경남","a":"창원시"},{"id":"11790852131","n":"낙타스","r":"경기","a":"부천시"},{"id":"11790842676","n":"날스바이크","r":"인천","a":"연수구"},{"id":"11790842675","n":"남강MTB","r":"경남","a":"진주시"},{"id":"11790842491","n":"남해미조잠수","r":"경남","a":"남해군"},{"id":"11790849465","n":"낭만자전거흑석점","r":"광주","a":"광산구"},{"id":"11790833321","n":"네오바이크","r":"경북","a":"칠곡군"},{"id":"11790849444","n":"노랑","r":"서울","a":"서초구"},{"id":"11790833388","n":"노머시(스페셜라이즈드수원광교)","r":"경기","a":"수원시"},{"id":"11790852277","n":"누리바이크","r":"경남","a":"김해시"},{"id":"11790833372","n":"누리바이크","r":"서울","a":"서초구"},{"id":"11790833220","n":"늘푸른자전거","r":"경기","a":"안산시"},{"id":"11790838359","n":"다원코리아","r":"인천","a":"부평구"},{"id":"11790841068","n":"닥터바이크","r":"서울","a":"구로구"},{"id":"11790856363","n":"달려라자전거","r":"전북","a":"익산시"},{"id":"11790856482","n":"더 웨이","r":"대전","a":"유성구"},{"id":"11790856697","n":"더바이시클","r":"전남","a":"순천시"},{"id":"11790833395","n":"더바이크샵 오창점","r":"충북","a":"청주시"},{"id":"11790841186","n":"더베스트바이크","r":"경북","a":"영주시"},{"id":"11790833316","n":"더사이클러리","r":"울산","a":"중구"},{"id":"11790838378","n":"더핏(THE FIT)","r":"경기","a":"고양시"},{"id":"11790833249","n":"데이빗 사이클","r":"울산","a":"중구"},{"id":"11790842443","n":"데일리바이시클","r":"경기","a":"고양시"},{"id":"11790831309","n":"데일리바이크","r":"서울","a":"송파구"},{"id":"11790831396","n":"도프존","r":"서울","a":"광진구"},{"id":"11790831312","n":"동네두바퀴","r":"경기","a":"용인시"},{"id":"11790831148","n":"동두천엠티비","r":"경기","a":"동두천시"},{"id":"11790856496","n":"동부엠티비","r":"인천","a":"남동구"},{"id":"11790842451","n":"동탄바이시클","r":"경기","a":"화성시"},{"id":"11790849462","n":"돼지바이크","r":"인천","a":"서구"},{"id":"11790833223","n":"두 번째 자전거(2ndvelo)","r":"서울","a":"서초구"},{"id":"11790862355","n":"두바리바이크(바이크드림 시지점)","r":"대구","a":"수성구"},{"id":"11790856532","n":"두바이크(안중점)","r":"경기","a":"평택시"},{"id":"11790852159","n":"두바퀴세상","r":"서울","a":"강동구"},{"id":"11790841290","n":"드림바이크","r":"강원","a":"원주시"},{"id":"11790856581","n":"드림스포츠","r":"충북","a":"진천군"},{"id":"11790841208","n":"드림자전거","r":"서울","a":"서초구"},{"id":"11790842538","n":"드주와(de Joie)","r":"서울","a":"용산구"},{"id":"11790856699","n":"디벨롭바이크","r":"서울","a":"서대문구"},{"id":"11790833085","n":"디스몰","r":"경기","a":"파주시"},{"id":"11790838345","n":"디스코 바이크(Disco Bike)","r":"서울","a":"용산구"},{"id":"11790833250","n":"디아블로 바이크","r":"광주","a":"남구"},{"id":"11790846903","n":"디어바이크","r":"대전","a":"동구"},{"id":"11790831318","n":"디케이레이싱","r":"서울","a":"강동구"},{"id":"11790838410","n":"디파인워크샵","r":"경기","a":"수원시"},{"id":"11790838407","n":"땡스바이크","r":"서울","a":"구로구"},{"id":"11790849273","n":"또또바이크","r":"부산","a":"사하구"},{"id":"11790852130","n":"뚜르드바이크","r":"강원","a":"춘천시"},{"id":"11790856497","n":"뚜르드벨로","r":"서울","a":"노원구"},{"id":"11790853651","n":"라온바이크","r":"경남","a":"창녕군"},{"id":"11790849286","n":"라이더스케이브","r":"서울","a":"마포구"},{"id":"11790833206","n":"라이더스파크","r":"경기","a":"남양주시"},{"id":"11790862375","n":"라이드","r":"서울","a":"도봉구"},{"id":"11790842483","n":"라이드 플러스 자전거","r":"경남","a":"밀양시"},{"id":"11790842501","n":"라이드라이드사우스","r":"부산","a":"수영구"},{"id":"11790842514","n":"라이드위드유","r":"울산","a":"중구"},{"id":"11790841256","n":"라이트브라더스","r":"서울","a":"성동구"},{"id":"11790842505","n":"라트 바이크 (자전거연구소)","r":"경기","a":"김포시"},{"id":"11790852401","n":"라피아토","r":"서울","a":"강동구"},{"id":"11790833371","n":"락바이크","r":"충남","a":"천안시"},{"id":"11790856421","n":"랠리바이크","r":"경기","a":"파주시"},{"id":"11790852026","n":"랩306(LAB306)","r":"서울","a":"마포구"},{"id":"11790856402","n":"랩바이크","r":"경남","a":"창원시"},{"id":"11790831261","n":"랩삼육공 자전거연구소","r":"광주","a":"북구"},{"id":"11790833375","n":"러블리바이시클","r":"경기","a":"파주시"},{"id":"11790852276","n":"런바이크","r":"부산","a":"동래구"},{"id":"11790838413","n":"레드도트","r":"대구","a":"수성구"},{"id":"11790842450","n":"레드바이크","r":"충북","a":"청주시"},{"id":"11790856623","n":"레드바이크(안양)","r":"경기","a":"안양시"},{"id":"11790852186","n":"레이바이크","r":"대구","a":"달서구"},{"id":"11790833390","n":"로기웍스","r":"경기","a":"성남시"},{"id":"11790833205","n":"로드스타","r":"경기","a":"구리시"},{"id":"11790851522","n":"로버","r":"경북","a":"포항시"},{"id":"11790849301","n":"룡2바이크","r":"경남","a":"김해시"},{"id":"11790849344","n":"루비컴퍼니","r":"서울","a":"서초구"},{"id":"11790842497","n":"루키바이크","r":"서울","a":"광진구"},{"id":"11790849418","n":"루키바이크","r":"경남","a":"진주시"},{"id":"11790862489","n":"리바이크","r":"서울","a":"강북구"},{"id":"11790856775","n":"리버바이크(River Bike)","r":"충북","a":"청주시"},{"id":"11790833135","n":"리버사이클아카데미","r":"전북","a":"전주시"},{"id":"11790849300","n":"리버스바이크","r":"서울","a":"강동구"},{"id":"11790849451","n":"리스타트","r":"경기","a":"구리시"},{"id":"11790851484","n":"리케","r":"인천","a":"남동구"},{"id":"11790856613","n":"림바이크","r":"경기","a":"안성시"},{"id":"11790846757","n":"링크바이크","r":"부산","a":"동래구"},{"id":"11790862396","n":"마니또바이크","r":"서울","a":"중랑구"},{"id":"11790856550","n":"마리스토어","r":"대구","a":"동구"},{"id":"11790849381","n":"막달리는 자전거","r":"경남","a":"창원시"},{"id":"11790831326","n":"매너바이크","r":"서울","a":"양천구"},{"id":"11790856480","n":"매드기어","r":"충북","a":"청주시"},{"id":"11790852092","n":"맥스바이크","r":"전북","a":"군산시"},{"id":"11790852248","n":"맨온바이크","r":"경남","a":"김해시"},{"id":"11790856458","n":"메리다 광주점","r":"광주","a":"광산구"},{"id":"11790841281","n":"메일바이크 창원점","r":"경남","a":"창원시"},{"id":"11790841292","n":"명성레포츠","r":"대전","a":"중구"},{"id":"11790852153","n":"명수네자전거","r":"경북","a":"안동시"},{"id":"11790842523","n":"모노클","r":"대구","a":"서구"},{"id":"11790849353","n":"모든자전거","r":"울산","a":"북구"},{"id":"11790841089","n":"목수네 자전거","r":"경기","a":"여주시"},{"id":"11790833387","n":"목포프로바이크","r":"전남","a":"목포시"},{"id":"11790833408","n":"몬스터바이크","r":"경남","a":"창원시"},{"id":"11790852060","n":"몽키자전거","r":"경남","a":"양산시"},{"id":"11790845214","n":"미성스포츠","r":"서울","a":"노원구"},{"id":"11790833415","n":"미소바이크","r":"대구","a":"서구"},{"id":"11790852230","n":"민바이크","r":"경남","a":"진주시"},{"id":"11790838375","n":"민바이크","r":"경기","a":"광주시"},{"id":"11790856438","n":"민우바이크","r":"대구","a":"달성군"},{"id":"11790851419","n":"민재자전거","r":"경기","a":"용인시"},{"id":"11790852006","n":"민트바이크","r":"충북","a":"제천시"},{"id":"11790852149","n":"밀바이크","r":"광주","a":"북구"},{"id":"11790849409","n":"바이바이씨클","r":"경기","a":"의정부시"},{"id":"11790852261","n":"바이시클 메모리즈","r":"대구","a":"달서구"},{"id":"11790852005","n":"바이시클메가몰","r":"경기","a":"고양시"},{"id":"11790852179","n":"바이시클메모리즈","r":"대구","a":"달서구"},{"id":"11790831444","n":"바이시클테크과천센터","r":"경기","a":"과천시"},{"id":"11790862490","n":"바이씨클원","r":"경기","a":"수원시"},{"id":"11790842370","n":"바이크 사이트 워크샵","r":"경기","a":"성남시"},{"id":"11790842478","n":"바이크N","r":"경기","a":"군포시"},{"id":"11790852216","n":"바이크고집","r":"경기","a":"부천시"},{"id":"11790831182","n":"바이크닥터","r":"경기","a":"의정부시"},{"id":"11790856498","n":"바이크드림","r":"대구","a":"달서구"},{"id":"11790841309","n":"바이크드림","r":"대구","a":"달성군"},{"id":"11790840924","n":"바이크드림 지산점","r":"대구","a":"수성구"},{"id":"11790841274","n":"바이크라운지","r":"세종","a":"해밀3로"},{"id":"11790856534","n":"바이크라이더","r":"서울","a":"노원구"},{"id":"11790833359","n":"바이크락","r":"대전","a":"서구"},{"id":"11790856742","n":"바이크랜드","r":"서울","a":"중랑구"},{"id":"11790856519","n":"바이크랩","r":"경기","a":"양주시"},{"id":"11790841034","n":"바이크러쉬","r":"서울","a":"마포구"},{"id":"11790833404","n":"바이크로","r":"서울","a":"강서구"},{"id":"11790838453","n":"바이크롤","r":"인천","a":"계양구"},{"id":"11790862410","n":"바이크루","r":"경기","a":"양평군"},{"id":"11790841206","n":"바이크리아","r":"대전","a":"유성구"},{"id":"11790831413","n":"바이크마트","r":"강원","a":"강릉시"},{"id":"11790856401","n":"바이크마트동탄지점","r":"경기","a":"화성시"},{"id":"11790852018","n":"바이크매니아","r":"경기","a":"의정부시"},{"id":"11790856512","n":"바이크메익스미해피","r":"서울","a":"마포구"},{"id":"11790856570","n":"바이크박스","r":"경기","a":"성남시"},{"id":"11790831367","n":"바이크박스","r":"대구","a":"달서구"},{"id":"11790841313","n":"바이크박스 인후점","r":"전북","a":"전주시"},{"id":"11790846827","n":"바이크베이스","r":"전북","a":"정읍시"},{"id":"11790841084","n":"바이크브로스","r":"인천","a":"연수구"},{"id":"11790852120","n":"바이크비","r":"서울","a":"성동구"},{"id":"11790852256","n":"바이크빈","r":"경기","a":"수원시"},{"id":"11790841065","n":"바이크스타일","r":"대전","a":"유성구"},{"id":"11790842500","n":"바이크스테이션(BBMTB원주)","r":"강원","a":"원주시"},{"id":"11790841179","n":"바이크스토어(대구)","r":"대구","a":"수성구"},{"id":"11790856472","n":"바이크싸이클대전점","r":"대전","a":"서구"},{"id":"11790849255","n":"바이크아레나","r":"대구","a":"달성군"},{"id":"11790842512","n":"바이크앤모어","r":"경기","a":"평택시"},{"id":"11790862439","n":"바이크엠씨에스","r":"경기","a":"의정부시"},{"id":"11790862303","n":"바이크엣지","r":"경북","a":"포항시"},{"id":"11790841145","n":"바이크온","r":"경기","a":"평택시"},{"id":"11790852222","n":"바이크워크샵","r":"대전","a":"유성구"},{"id":"11790831338","n":"바이크원","r":"서울","a":"도봉구"},{"id":"11790856465","n":"바이크잉","r":"광주","a":"남구"},{"id":"11790853575","n":"바이크케어","r":"서울","a":"양천구"},{"id":"11790841019","n":"바이크클리닉 대구점","r":"대구","a":"달서구"},{"id":"11790833108","n":"바이크타운","r":"전북","a":"전주시"},{"id":"11790841277","n":"바이크탑","r":"강원","a":"춘천시"},{"id":"11790838548","n":"바이크패들러","r":"부산","a":"동래구"},{"id":"11790849393","n":"바이크팩토리","r":"강원","a":"원주시"},{"id":"11790833232","n":"바이크팩토리","r":"경남","a":"진주시"},{"id":"11790856506","n":"바이크팩토리","r":"강원","a":"원주시"},{"id":"11790842194","n":"바이크팩토리","r":"충남","a":"천안시"},{"id":"11790856649","n":"바이크포워드","r":"경남","a":"양산시"},{"id":"11790849546","n":"바이크포트","r":"경남","a":"양산시"},{"id":"11790838259","n":"바이크프라자","r":"강원","a":"삼척시"},{"id":"11790831286","n":"바이크플러스","r":"서울","a":"영등포구"},{"id":"11790853653","n":"바이크플러스(강북점)","r":"서울","a":"은평구"},{"id":"11790852182","n":"바이크플레이","r":"대구","a":"중구"},{"id":"11790841299","n":"바이크플레이스","r":"경기","a":"평택시"},{"id":"11790833215","n":"바이크피트","r":"충북","a":"충주시"},{"id":"11790833383","n":"바이크하우스","r":"울산","a":"남구"},{"id":"11790849376","n":"바이크하우스 신림","r":"서울","a":"관악구"},{"id":"11790856739","n":"바이크홀릭","r":"서울","a":"은평구"},{"id":"11790862415","n":"바이클","r":"제주","a":"제주시"},{"id":"11790853588","n":"바이클립스","r":"서울","a":"마포구"},{"id":"11790841279","n":"바이키 양재점","r":"서울","a":"강남구"},{"id":"11790833245","n":"바이킹","r":"대구","a":"남구"},{"id":"11790862329","n":"바이투휠즈","r":"경기","a":"남양주시"},{"id":"11790838393","n":"박안경","r":"대구","a":"달서구"},{"id":"11790852161","n":"박정민의잔차방","r":"경남","a":"진주시"},{"id":"11790845270","n":"백만킬로사이클아카데미","r":"서울","a":"강동구"},{"id":"11790833125","n":"백석바이크","r":"경기","a":"양주시"},{"id":"11790833396","n":"백스테이지","r":"서울","a":"송파구"},{"id":"11790833406","n":"백운자전거공업","r":"서울","a":"중랑구"},{"id":"11790833330","n":"백이자전거","r":"경기","a":"의정부시"},{"id":"11790841184","n":"버블바이크","r":"서울","a":"마포구"},{"id":"11790838406","n":"버블바이크","r":"서울","a":"마포구"},{"id":"11790856364","n":"벙커(bunker)","r":"경남","a":"진주시"},{"id":"11790856388","n":"베랑길자전거해운대","r":"부산","a":"기장군"},{"id":"11790852128","n":"베이스바이크","r":"대구","a":"북구"},{"id":"11790838456","n":"벨로데이","r":"서울","a":"성동구"},{"id":"11790862334","n":"벨로로","r":"충북","a":"음성군"},{"id":"11790846923","n":"벨로마스터","r":"대구","a":"남구"},{"id":"11790841164","n":"벨로몬","r":"경기","a":"광주시"},{"id":"11790838346","n":"벨로벨로","r":"대구","a":"동구"},{"id":"11790838412","n":"벨로시티","r":"서울","a":"동대문구"},{"id":"11790833267","n":"벨로시티즌(VELO CITIZEN)","r":"서울","a":"송파구"},{"id":"11790842480","n":"벨로엥","r":"경기","a":"광명시"},{"id":"11790849382","n":"벨로웍스","r":"부산","a":"해운대구"},{"id":"11790841090","n":"벨로인스포츠","r":"경남","a":"창원시"},{"id":"11790841311","n":"벨로인터내셔널","r":"인천","a":"서구"},{"id":"11790841139","n":"벨로파파","r":"경기","a":"화성시"},{"id":"11790856513","n":"벨로팩토리","r":"서울","a":"강동구"},{"id":"11790841220","n":"벨로픽스","r":"서울","a":"중랑구"},{"id":"11790849463","n":"벨로하우스","r":"인천","a":"서구"},{"id":"11790849424","n":"별빛mtb","r":"경북","a":"영천시"},{"id":"11790862426","n":"봄bike","r":"경기","a":"고양시"},{"id":"11790841190","n":"봉바이크","r":"경기","a":"안양시"},{"id":"11790841282","n":"봉크박스","r":"세종","a":"노을1로"},{"id":"11790842195","n":"북구삼천리","r":"경북","a":"포항시"},{"id":"11790852227","n":"분당은솔스포츠","r":"경기","a":"성남시"},{"id":"11790862363","n":"브랜드유니버스","r":"서울","a":"강남구"},{"id":"11790852250","n":"브로바이크","r":"경기","a":"안양시"},{"id":"11790842199","n":"브리즈사이클러리","r":"제주","a":"제주시"},{"id":"11790852172","n":"블랙바이크","r":"경북","a":"구미시"},{"id":"11790831147","n":"비바벨로","r":"인천","a":"서구"},{"id":"11790842607","n":"비보호바이크","r":"경기","a":"용인시"},{"id":"11790831283","n":"비비","r":"대전","a":"유성구"},{"id":"11790852057","n":"비비파이브","r":"서울","a":"용산구"},{"id":"11790856650","n":"비비파이브 사우스죽전","r":"경기","a":"용인시"},{"id":"11790842280","n":"비비파이브이스트지점","r":"서울","a":"강동구"},{"id":"11790841185","n":"비스포크 서울","r":"서울","a":"광진구"},{"id":"11790845266","n":"비씨사이클아카데미","r":"인천","a":"계양구"},{"id":"11790838351","n":"비앤엠인터네셔널","r":"서울","a":"강동구"},{"id":"11790841222","n":"비에이","r":"서울","a":"강서구"},{"id":"11790856700","n":"비엠씨 서울점","r":"서울","a":"강동구"},{"id":"11790856466","n":"비이","r":"경기","a":"고양시"},{"id":"11790853589","n":"비치바이크","r":"부산","a":"금정구"},{"id":"11790852056","n":"비케이바이크","r":"충북","a":"청주시"},{"id":"11790849350","n":"빈스바이크빈스애견호텔","r":"서울","a":"강남구"},{"id":"11790856564","n":"빛자전거","r":"경기","a":"김포시"},{"id":"11790842490","n":"사이클롯지(cykel lodge)","r":"대구","a":"수성구"},{"id":"11790845271","n":"사이클링듀오","r":"서울","a":"마포구"},{"id":"11790862399","n":"사이클식스","r":"경기","a":"이천시"},{"id":"11790852119","n":"사이클월드","r":"서울","a":"동작구"},{"id":"11790852176","n":"사이클인","r":"서울","a":"강동구"},{"id":"11790833127","n":"사이클존","r":"대전","a":"서구"},{"id":"11790862222","n":"사이클존(CYCLEZON)","r":"서울","a":"강남구"},{"id":"11790853669","n":"사이클필드","r":"경기","a":"용인시"},{"id":"11790856462","n":"산들스포츠","r":"경기","a":"안산시"},{"id":"13522414444","n":"산바다 안성근","r":"","a":""},{"id":"13522489153","n":"산바다 정태욱","r":"","a":""},{"id":"11790851355","n":"산바다스포츠","r":"서울","a":"강동구"},{"id":"11790831209","n":"산바다스포츠","r":"서울","a":"강남구"},{"id":"11790841182","n":"산바다스포츠","r":"서울","a":"강남구"},{"id":"11790842502","n":"산바다스포츠","r":"서울","a":"강남구"},{"id":"11790841087","n":"산바다스포츠","r":"경기","a":"의정부시"},{"id":"11790862326","n":"산바다스포츠 기술팀","r":"서울","a":"강남구"},{"id":"11790831392","n":"산야로MTB","r":"강원","a":"횡성군"},{"id":"11790856548","n":"산잔차길잔차","r":"충북","a":"충주시"},{"id":"11790856652","n":"산즐러","r":"서울","a":"영등포구"},{"id":"11790852077","n":"산타바이크","r":"경기","a":"안성시"},{"id":"11790838260","n":"삼삼바이크","r":"부산","a":"해운대구"},{"id":"11790852028","n":"삼성사이클","r":"부산","a":"사하구"},{"id":"11790833398","n":"삼천리 자전거 태안점","r":"충남","a":"태안군"},{"id":"11790833364","n":"삼천리레스포자전거","r":"강원","a":"삼척시"},{"id":"11790833365","n":"삼천리자전거","r":"경남","a":"밀양시"},{"id":"11790856366","n":"삼천리자전거","r":"경기","a":"파주시"},{"id":"11790842561","n":"삼천리자전거 금산칸타빌점","r":"충남","a":"금산군"},{"id":"11790862353","n":"삼천리자전거 마재점","r":"광주","a":"서구"},{"id":"11790838441","n":"삼천리자전거 상동점","r":"전남","a":"목포시"},{"id":"11790862478","n":"삼천리자전거 선천지구점","r":"경남","a":"김해시"},{"id":"11790833145","n":"삼천리자전거 아시아드점","r":"부산","a":"연제구"},{"id":"11790852059","n":"삼천리자전거 중앙점","r":"경기","a":"여주시"},{"id":"11790856403","n":"삼천리자전거(남악점)","r":"전남","a":"목포시"},{"id":"11790842366","n":"삼천리자전거.서부산mtb","r":"부산","a":"강서구"},{"id":"11790831279","n":"삼천리자전거산본중앙점","r":"경기","a":"군포시"},{"id":"11790849302","n":"삼천리자전거삼계동점썬바이크","r":"경남","a":"김해시"},{"id":"11790842453","n":"삼천리자전거온양점","r":"충남","a":"아산시"},{"id":"11790831272","n":"삼천리자전거좋은","r":"경기","a":"수원시"},{"id":"11790862157","n":"삼천리자전거하나로점","r":"전북","a":"익산시"},{"id":"11790838300","n":"삼화자전거","r":"울산","a":"남구"},{"id":"11790856511","n":"새재바이크","r":"경북","a":"문경시"},{"id":"11790833226","n":"샵KRC","r":"대전","a":"대덕구"},{"id":"11790862337","n":"샵펠로톤","r":"경기","a":"안양시"},{"id":"11790833283","n":"서비바이크","r":"경남","a":"양산시"},{"id":"11790856620","n":"서산프로바이크","r":"충남","a":"서산시"},{"id":"11790856793","n":"서해자전거점","r":"경기","a":"평택시"},{"id":"11790831325","n":"석바이크.용인","r":"경기","a":"용인시"},{"id":"11790838401","n":"석원상사","r":"광주","a":"서구"},{"id":"11790841216","n":"선데이모닝자전거","r":"대구","a":"달서구"},{"id":"11790845315","n":"선바이크","r":"충북","a":"청주시"},{"id":"11790841134","n":"섭바이크","r":"서울","a":"중랑구"},{"id":"11790841215","n":"성내삼천리자전거","r":"서울","a":"강동구"},{"id":"11790862302","n":"세미앤리","r":"경기","a":"수원시"},{"id":"11790833280","n":"세발자전거","r":"울산","a":"울주군"},{"id":"11790831375","n":"세븐바이크","r":"경기","a":"용인시"},{"id":"11790849510","n":"세이스포츠","r":"경기","a":"성남시"},{"id":"11790849443","n":"센스네","r":"충북","a":"청주시"},{"id":"11790833242","n":"소보루 자전거","r":"경기","a":"성남시"},{"id":"11790862400","n":"소셜라이딩","r":"경기","a":"김포시"},{"id":"11790838334","n":"소프바이크","r":"대전","a":"서구"},{"id":"11790841234","n":"소후","r":"경기","a":"의왕시"},{"id":"11790841187","n":"손바이크","r":"경북","a":"상주시"},{"id":"11790841081","n":"손바이크","r":"부산","a":"금정구"},{"id":"11790841229","n":"송바이크","r":"충남","a":"아산시"},{"id":"11790852255","n":"송우자전거","r":"경기","a":"포천시"},{"id":"11790849454","n":"수(soo)스포츠","r":"충북","a":"음성군"},{"id":"11790841147","n":"수바이시클","r":"대구","a":"수성구"},{"id":"11790833228","n":"수바이크","r":"경북","a":"상주시"},{"id":"11790862378","n":"수바이크샵","r":"서울","a":"양천구"},{"id":"11790838335","n":"수원바이킹","r":"경기","a":"수원시"},{"id":"11790841300","n":"수원알파","r":"경기","a":"수원시"},{"id":"11790849440","n":"순풍자전거","r":"경기","a":"남양주시"},{"id":"11790852098","n":"슈퍼바이크몰","r":"대전","a":"서구"},{"id":"11790833207","n":"슈페라사이클트레이닝센터","r":"경기","a":"안양시"},{"id":"11790833409","n":"스미스달구본점","r":"부산","a":"동래구"},{"id":"11790842415","n":"스카이바이크","r":"충남","a":"공주시"},{"id":"11790852062","n":"스카이벨로","r":"서울","a":"마포구"},{"id":"11790852181","n":"스콜(부산점)","r":"부산","a":"북구"},{"id":"11790856526","n":"스타바이크","r":"경기","a":"고양시"},{"id":"11790842545","n":"스타사이클","r":"경기","a":"고양시"},{"id":"11790841308","n":"스태프바이크","r":"울산","a":"울주군"},{"id":"11790833411","n":"스터번바이크","r":"서울","a":"강동구"},{"id":"11790852226","n":"스페셜라이즈드 바이크투게더","r":"경남","a":"진주시"},{"id":"11790853628","n":"스페셜라이즈드 앞산점(조세핀)","r":"대구","a":"남구"},{"id":"11790841250","n":"스페셜라이즈드 창원점","r":"경남","a":"창원시"},{"id":"11790838514","n":"스페셜라이즈드코리아(유)","r":"서울","a":"용산구"},{"id":"11790841057","n":"스포츠 토탈 케어","r":"서울","a":"노원구"},{"id":"11790831411","n":"스포츠그룹카스 주식회사","r":"경기","a":"화성시"},{"id":"11790851431","n":"스프린트 베이스(sprint base)","r":"서울","a":"송파구"},{"id":"11790845227","n":"스프링6","r":"서울","a":"영등포구"},{"id":"11790833412","n":"스피츠","r":"서울","a":"영등포구"},{"id":"11790856544","n":"스핀웍스","r":"부산","a":"강서구"},{"id":"11790852055","n":"스핀하우스 [ SPIN HOUSE ]","r":"서울","a":"성동구"},{"id":"11790845238","n":"승 센터","r":"서울","a":"영등포구"},{"id":"11790856315","n":"시즌온","r":"대구","a":"수성구"},{"id":"11790840925","n":"신스(SHINS)","r":"인천","a":"부평구"},{"id":"11790862207","n":"심바이크","r":"부산","a":"사상구"},{"id":"11790842147","n":"심즈바이크","r":"경기","a":"안산시"},{"id":"11790856578","n":"싱글트랙","r":"서울","a":"마포구"},{"id":"11790856467","n":"싸이더스바이크","r":"경기","a":"성남시"},{"id":"11790838454","n":"싸이클러리","r":"대전","a":"중구"},{"id":"11790831313","n":"싸이클러스 이천","r":"경기","a":"이천시"},{"id":"11790842506","n":"싸이클러스(이천)","r":"경기","a":"이천시"},{"id":"11790852090","n":"싸이클웍스(지브인터네셔널)","r":"경기","a":"성남시"},{"id":"11790833410","n":"싸이클파크","r":"부산","a":"금정구"},{"id":"11790841283","n":"싸이클프로웍스","r":"서울","a":"동작구"},{"id":"11790833187","n":"쌍도네아지트","r":"경기","a":"고양시"},{"id":"11790838435","n":"쌔바","r":"경북","a":"문경시"},{"id":"11790838447","n":"써니바이크","r":"경북","a":"포항시"},{"id":"11790852094","n":"써밋바이크","r":"부산","a":"강서구"},{"id":"11790856447","n":"쎈바이크","r":"강원","a":"원주시"},{"id":"11790852194","n":"쏠바이크","r":"강원","a":"양양군"},{"id":"11790833319","n":"씨엔제이자전거","r":"충북","a":"청주시"},{"id":"11790862504","n":"아름다운자전거","r":"경기","a":"고양시"},{"id":"11790851985","n":"아름자전거","r":"세종","a":"보듬3로"},{"id":"11790852180","n":"아마존엠티비아카데미","r":"경기","a":"고양시"},{"id":"11790846920","n":"아이디바이크","r":"경기","a":"남양주시"},{"id":"11790842471","n":"아이바이크","r":"전남","a":"무안군"},{"id":"11790842398","n":"아이스테이션","r":"부산","a":"해운대구"},{"id":"11790862376","n":"아이엠바이크","r":"울산","a":"중구"},{"id":"11790831228","n":"아토벨로","r":"경기","a":"고양시"},{"id":"11790856611","n":"아트바이크","r":"경기","a":"성남시"},{"id":"11790833403","n":"아트벨로1982자전거","r":"대전","a":"서구"},{"id":"11790833172","n":"아티즌바이시클","r":"서울","a":"서초구"},{"id":"11790852084","n":"아프로바이크(AFRO BIKE)","r":"서울","a":"송파구"},{"id":"11790833193","n":"안동자전거","r":"경북","a":"안동시"},{"id":"11790856468","n":"안양 찬스바이크","r":"경기","a":"안양시"},{"id":"11790849405","n":"안양MTB","r":"경기","a":"안양시"},{"id":"11790852067","n":"알톤스포츠","r":"경남","a":"김해시"},{"id":"11790849493","n":"알톤스포츠 아산대리점","r":"충남","a":"아산시"},{"id":"11790846899","n":"알톤자전거","r":"충북","a":"진천군"},{"id":"11790852010","n":"알톤자전거","r":"충북","a":"충주시"},{"id":"11790842485","n":"알톤자전거(캡틴바이크0","r":"경기","a":"안성시"},{"id":"11790856539","n":"알톤자전거신대점","r":"전남","a":"순천시"},{"id":"11790849481","n":"알톤제스트바이크","r":"경기","a":"평택시"},{"id":"11790842498","n":"알포비","r":"경기","a":"광명시"},{"id":"11790849423","n":"앙바이크","r":"부산","a":"부산진구"},{"id":"11790852279","n":"앤드류바이크","r":"서울","a":"광진구"},{"id":"11790833392","n":"야베스MTB","r":"대구","a":"동구"},{"id":"11790862224","n":"양군바이크","r":"경기","a":"의정부시"},{"id":"11790856656","n":"어썸비바이크","r":"경기","a":"남양주시"},{"id":"11790833276","n":"어전귀자전거","r":"경기","a":"안양시"},{"id":"11790851977","n":"업힐노바이크","r":"대전","a":"서구"},{"id":"11790851560","n":"에디바이크","r":"서울","a":"강동구"},{"id":"11790862330","n":"에디스바이크샵","r":"전남","a":"광양시"},{"id":"11790833130","n":"에디스바이크샵 순천점","r":"전남","a":"순천시"},{"id":"11790856602","n":"에버피크","r":"경기","a":"남양주시"},{"id":"11790852013","n":"에스바이크(S.Bike)","r":"서울","a":"노원구"},{"id":"11790842369","n":"에스비엠티비","r":"경기","a":"고양시"},{"id":"11790831456","n":"에스엠스포츠","r":"경기","a":"의정부시"},{"id":"11790842494","n":"에스엠지 레저","r":"전북","a":"김제시"},{"id":"11790852027","n":"에스제이커머스","r":"대구","a":"수성구"},{"id":"11790862455","n":"에이벡","r":"서울","a":"송파구"},{"id":"11790856460","n":"에이치엠(HM)바이크","r":"경남","a":"양산시"},{"id":"11790833368","n":"에이플러스 자전거","r":"경북","a":"경산시"},{"id":"11790842334","n":"에잇플레이스","r":"경기","a":"성남시"},{"id":"11790849413","n":"에코바이크","r":"부산","a":"수영구"},{"id":"11790842368","n":"엔디바이크","r":"경기","a":"화성시"},{"id":"11790856562","n":"엔에스알 순천점","r":"전남","a":"순천시"},{"id":"11790842560","n":"엔에스엠바이크","r":"경기","a":"부천시"},{"id":"11790833323","n":"엘씨컴퍼니","r":"부산","a":"수영구"},{"id":"11790838515","n":"엘에스네트웍스","r":"서울","a":"서초구"},{"id":"11790833075","n":"엠바이크 MBIKE","r":"부산","a":"동래구"},{"id":"11790852213","n":"엠엔스퀘어","r":"서울","a":"마포구"},{"id":"11790856422","n":"엠케이바이크","r":"서울","a":"동대문구"},{"id":"11790853650","n":"엠티비 아카데미 나인","r":"서울","a":"마포구"},{"id":"11790853591","n":"엠티비월드","r":"부산","a":"사상구"},{"id":"11790853656","n":"엠티비타운 초전점","r":"경남","a":"진주시"},{"id":"11790852190","n":"엠티비텐","r":"경기","a":"남양주시"},{"id":"11790852104","n":"여우의 다락방","r":"서울","a":"마포구"},{"id":"11790838470","n":"영동바이크","r":"경기","a":"광명시"},{"id":"11790852030","n":"영바이크","r":"광주","a":"서구"},{"id":"11790841214","n":"영바이크","r":"대구","a":"동구"},{"id":"11790849287","n":"영이바이크(정MTB)","r":"광주","a":"북구"},{"id":"11790849441","n":"영코바이크","r":"경북","a":"경산시"},{"id":"11790841213","n":"영하우스","r":"충남","a":"천안시"},{"id":"11790841200","n":"오공삼자전거","r":"대전","a":"유성구"},{"id":"11790852162","n":"오럼바이크","r":"울산","a":"중구"},{"id":"11790833407","n":"오름자전거","r":"경기","a":"평택시"},{"id":"11790856424","n":"오바이크샵","r":"울산","a":"중구"},{"id":"11790849272","n":"오복이몰","r":"인천","a":"미추홀구"},{"id":"11790852066","n":"오씨씨515","r":"부산","a":"동래구"},{"id":"11790852214","n":"오엠컴퍼니","r":"서울","a":"동작구"},{"id":"11790849518","n":"오창MTB","r":"충북","a":"청주시"},{"id":"11790862420","n":"오케이사이클링","r":"경기","a":"김포시"},{"id":"11790856621","n":"오투바이크","r":"경기","a":"의정부시"},{"id":"11790833123","n":"오투바이크","r":"경기","a":"남양주시"},{"id":"11790852007","n":"옥길자전거","r":"경기","a":"부천시"},{"id":"11790833170","n":"옥수자전거","r":"서울","a":"성동구"},{"id":"11790846902","n":"옥정자전거","r":"경기","a":"양주시"},{"id":"11790842581","n":"옥탑정비소","r":"경기","a":"안양시"},{"id":"11790842487","n":"올림픽 사이클 아카데미","r":"서울","a":"송파구"},{"id":"11790841188","n":"올바이크","r":"경북","a":"경주시"},{"id":"11790856440","n":"올바이크MTB첼로점(책임모토랜드)","r":"경북","a":"칠곡군"},{"id":"11790833366","n":"용mtb","r":"경기","a":"안양시"},{"id":"11790852156","n":"용바이크","r":"울산","a":"북구"},{"id":"11790833333","n":"용바이크","r":"세종","a":"조치원읍"},{"id":"11790856391","n":"용바이크테크(YBT)","r":"경남","a":"양산시"},{"id":"11790842672","n":"용원MTB","r":"경남","a":"창원시"},{"id":"11790845174","n":"우기자전거","r":"충북","a":"청주시"},{"id":"11790833399","n":"우드윈드오데움","r":"인천","a":"연수구"},{"id":"11790841029","n":"우리바이크","r":"경기","a":"양주시"},{"id":"11790852025","n":"우정자전거","r":"경기","a":"의정부시"},{"id":"11790842276","n":"울산바이크","r":"울산","a":"울주군"},{"id":"11790831412","n":"워너비바이크","r":"대구","a":"달서구"},{"id":"11790841064","n":"워크 아웃(WORK OUT)","r":"부산","a":"남구"},{"id":"11790862373","n":"원더로드","r":"경기","a":"의정부시"},{"id":"11790838516","n":"원바이크","r":"경남","a":"양산시"},{"id":"11790853577","n":"원바이크","r":"서울","a":"송파구"},{"id":"11790852083","n":"원사이클","r":"대구","a":"수성구"},{"id":"11790852294","n":"원사이클","r":"서울","a":"서초구"},{"id":"11790842612","n":"원픽바이크","r":"경기","a":"성남시"},{"id":"11790852158","n":"월드바이크","r":"울산","a":"남구"},{"id":"11790853667","n":"월드바이크","r":"경기","a":"남양주시"},{"id":"11790831207","n":"위너바이크","r":"전북","a":"남원시"},{"id":"11790862430","n":"위드바이크","r":"서울","a":"도봉구"},{"id":"11790856571","n":"위드바이크","r":"경남","a":"진주시"},{"id":"11790838390","n":"위아사이클","r":"서울","a":"송파구"},{"id":"13501563531","n":"위클 여의도","r":"서울","a":"영등포구"},{"id":"11790852221","n":"위클 청담점","r":"서울","a":"강남구"},{"id":"13501567359","n":"위클여의도","r":"서울","a":"영등포구"},{"id":"11790856517","n":"위플레이 강남점","r":"서울","a":"강남구"},{"id":"11790838399","n":"위플레이인터내셔날","r":"서울","a":"은평구"},{"id":"11790862339","n":"유봉자전거","r":"서울","a":"금천구"},{"id":"11790842515","n":"유승mtb","r":"서울","a":"서대문구"},{"id":"11790856741","n":"유티엘(팔당점)","r":"경기","a":"남양주시"},{"id":"11790842331","n":"의정부mtb","r":"경기","a":"의정부시"},{"id":"11790856439","n":"이동재mountainbike","r":"경기","a":"안산시"},{"id":"11790845422","n":"이바이크탑자전거","r":"서울","a":"양천구"},{"id":"11790852118","n":"이상묵바이크","r":"광주","a":"서구"},{"id":"11790842372","n":"이엑스바이크(EXBIKE)","r":"서울","a":"강서구"},{"id":"11790842674","n":"이지라이드 울산직영점","r":"울산","a":"중구"},{"id":"11790833391","n":"이지바이크","r":"경기","a":"용인시"},{"id":"11790851416","n":"이투바이크","r":"강원","a":"원주시"},{"id":"11790856557","n":"이팀장바이크","r":"부산","a":"수영구"},{"id":"11790851489","n":"이환걸","r":"서울","a":"마포구"},{"id":"11790856597","n":"익스트림바이크","r":"대구","a":"동구"},{"id":"11790841117","n":"익스프로레포츠","r":"경기","a":"안산시"},{"id":"11790852054","n":"인성바이크","r":"경기","a":"안양시"},{"id":"11790838358","n":"인천두바퀴","r":"인천","a":"미추홀구"},{"id":"11790842431","n":"일mtb","r":"경남","a":"창원시"},{"id":"11790852123","n":"일봉엠티비","r":"충남","a":"천안시"},{"id":"11790852218","n":"자이언트 대전","r":"대전","a":"유성구"},{"id":"11790856609","n":"자이언트자전거 인천점 댄디바이크","r":"인천","a":"부평구"},{"id":"11790841260","n":"자이언트자전거은평마이바이크","r":"서울","a":"은평구"},{"id":"11790856610","n":"자이언트청주","r":"충북","a":"청주시"},{"id":"11790842508","n":"자작나무MTB","r":"강원","a":"속초시"},{"id":"11790862190","n":"자전거 랩(LAB)","r":"경남","a":"김해시"},{"id":"11790862429","n":"자전거 점빵","r":"경남","a":"거제시"},{"id":"11790856565","n":"자전거가게","r":"강원","a":"원주시"},{"id":"11790846873","n":"자전거가게싸게파는집","r":"충북","a":"청주시"},{"id":"11790856428","n":"자전거가좋아","r":"부산","a":"해운대구"},{"id":"11790833370","n":"자전거공방 륜","r":"서울","a":"동작구"},{"id":"11790841233","n":"자전거공방두부공","r":"서울","a":"마포구"},{"id":"11790856444","n":"자전거데이(이엠티비코리아)","r":"경기","a":"부천시"},{"id":"11790856567","n":"자전거로가는여행","r":"경남","a":"양산시"},{"id":"11790838384","n":"자전거를 부탁해","r":"경기","a":"안산시"},{"id":"11790852126","n":"자전거마당","r":"부산","a":"연제구"},{"id":"11790838264","n":"자전거병원","r":"경기","a":"의정부시"},{"id":"11790831184","n":"자전거상점","r":"경기","a":"파주시"},{"id":"11790849529","n":"자전거세상 송천점","r":"전북","a":"전주시"},{"id":"11790862318","n":"자전거여행","r":"경기","a":"군포시"},{"id":"11790841073","n":"자전거연구소송파점","r":"서울","a":"송파구"},{"id":"11790852122","n":"자전거이야기","r":"전남","a":"여수시"},{"id":"11790856622","n":"자전거이야기(바이크스토리)","r":"경기","a":"포천시"},{"id":"11790838387","n":"자전거쟁이","r":"경기","a":"파주시"},{"id":"11790862382","n":"자전거종합마트(프로바이크)","r":"전북","a":"정읍시"},{"id":"11790856632","n":"자전거천국","r":"경북","a":"구미시"},{"id":"11790856702","n":"자전거타는남자","r":"대구","a":"북구"},{"id":"11790842281","n":"자전거탄풍경","r":"제주","a":"제주시"},{"id":"11790849299","n":"자전거파크","r":"강원","a":"원주시"},{"id":"11790849530","n":"자전거포 강가","r":"서울","a":"강서구"},{"id":"11790862267","n":"자전거포유","r":"전북","a":"정읍시"},{"id":"11790856634","n":"자전거하루","r":"인천","a":"서구"},{"id":"11790842543","n":"자행사","r":"서울","a":"광진구"},{"id":"11790849394","n":"잔차(JAN CHA)","r":"경남","a":"사천시"},{"id":"11790849354","n":"잔차나라","r":"부산","a":"강서구"},{"id":"11790841262","n":"장진우자전거","r":"서울","a":"송파구"},{"id":"11790831365","n":"잼바이크","r":"경기","a":"고양시"},{"id":"11790842516","n":"저스트라이드","r":"경북","a":"포항시"},{"id":"11790852237","n":"정선바이크","r":"광주","a":"광산구"},{"id":"11790842382","n":"정원준주임","r":"서울","a":"강남구"},{"id":"11790849258","n":"정으로달리는자전거 범바이크","r":"경기","a":"용인시"},{"id":"11790853624","n":"제로바이크","r":"전북","a":"전주시"},{"id":"11790831291","n":"제이디바이크","r":"경기","a":"구리시"},{"id":"11790849470","n":"제이바이시클","r":"경기","a":"수원시"},{"id":"11790862263","n":"제이아너","r":"경북","a":"경산시"},{"id":"11790833322","n":"제이엠바이크","r":"광주","a":"서구"},{"id":"11790856614","n":"제주 그린 바이크","r":"제주","a":"제주시"},{"id":"11790852177","n":"제주싸이클","r":"제주","a":"제주시"},{"id":"11790833334","n":"제주원바이크","r":"제주","a":"서귀포시"},{"id":"11790853657","n":"제주프로샵","r":"제주","a":"제주시"},{"id":"11790845272","n":"조범연","r":"경기","a":"화성시"},{"id":"11790856546","n":"조은자전거","r":"서울","a":"강남구"},{"id":"11790845391","n":"조이레져","r":"서울","a":"구로구"},{"id":"11790842488","n":"조이풀","r":"서울","a":"송파구"},{"id":"11790831457","n":"좋은자전거","r":"경기","a":"남양주시"},{"id":"11790838350","n":"주)바이키강남지점","r":"서울","a":"강남구"},{"id":"11790846871","n":"주바이크","r":"전남","a":"무안군"},{"id":"11790862372","n":"주식회사 가치올림(가올 자전거)","r":"경북","a":"안동시"},{"id":"11790862497","n":"주식회사 고래자전거","r":"서울","a":"양천구"},{"id":"11790852260","n":"주식회사 동탄스포츠","r":"경기","a":"화성시"},{"id":"11790852191","n":"주식회사 두잇","r":"경기","a":"시흥시"},{"id":"11790849548","n":"주식회사 마음을움직이는사람들","r":"서울","a":"서초구"},{"id":"11790856463","n":"주식회사 마커스","r":"경기","a":"부천시"},{"id":"11790852300","n":"주식회사 모노스토리지","r":"서울","a":"송파구"},{"id":"11790833072","n":"주식회사 모닝스타","r":"경기","a":"용인시"},{"id":"11790838439","n":"주식회사 바이씨클스테이션","r":"서울","a":"용산구"},{"id":"11790831366","n":"주식회사 바이코레","r":"경기","a":"화성시"},{"id":"11790862338","n":"주식회사 뱅뱅바이크","r":"경기","a":"성남시"},{"id":"11790842492","n":"주식회사 벨로스페이스","r":"경기","a":"용인시"},{"id":"11790842419","n":"주식회사 비비파이브","r":"서울","a":"용산구"},{"id":"11790841259","n":"주식회사 비엠웍스 매디슨 송파점","r":"서울","a":"송파구"},{"id":"11790833278","n":"주식회사 샘몰","r":"서울","a":"동작구"},{"id":"11790838324","n":"주식회사 스펠웍스","r":"서울","a":"강남구"},{"id":"11790862459","n":"주식회사 스포허브","r":"경기","a":"평택시"},{"id":"11790856522","n":"주식회사 씨아이웍스홀딩스","r":"서울","a":"성북구"},{"id":"11790838409","n":"주식회사 알더블류씨","r":"서울","a":"용산구"},{"id":"11790856477","n":"주식회사 에이엠비","r":"경기","a":"고양시"},{"id":"11790841194","n":"주식회사 엔조이바이크","r":"서울","a":"강동구"},{"id":"11790842475","n":"주식회사 오엠케이바이크캠프","r":"울산","a":"중구"},{"id":"11790831204","n":"주식회사 원앤드원","r":"경기","a":"고양시"},{"id":"11790849494","n":"주식회사 이엑스오","r":"경기","a":"성남시"},{"id":"11790862470","n":"주식회사 잇츠스포츠","r":"경기","a":"부천시"},{"id":"11790856556","n":"주식회사 자전거나라","r":"서울","a":"마포구"},{"id":"11790831440","n":"주식회사 잔차닷컴","r":"경기","a":"오산시"},{"id":"11790842484","n":"주식회사 지비스","r":"경기","a":"하남시"},{"id":"11790846821","n":"주식회사 코메트","r":"경기","a":"광주시"},{"id":"11790852014","n":"주식회사 키노크(스페셜 천호)","r":"서울","a":"강동구"},{"id":"11790842341","n":"주식회사 티피지리테일","r":"서울","a":"성동구"},{"id":"11790838258","n":"주식회사 페달링","r":"서울","a":"광진구"},{"id":"11790842608","n":"주식회사 펠트코리아","r":"인천","a":"서구"},{"id":"11790842499","n":"주식회사 필샵","r":"경기","a":"성남시"},{"id":"11790856450","n":"주식회사더무제","r":"경기","a":"고양시"},{"id":"11790849341","n":"주식회사디져샵","r":"서울","a":"마포구"},{"id":"11790849298","n":"주식회사바이크마트","r":"충북","a":"청주시"},{"id":"11790831445","n":"주식회사엠티비랜드","r":"부산","a":"동래구"},{"id":"11790838295","n":"주식회사이든","r":"세종","a":"금남면"},{"id":"11790841119","n":"주식회사자전거총각","r":"서울","a":"광진구"},{"id":"11790833204","n":"주원바이크","r":"경기","a":"의정부시"},{"id":"11790833246","n":"준바이크","r":"대전","a":"서구"},{"id":"11790849515","n":"준바이크","r":"경기","a":"시흥시"},{"id":"11790833405","n":"중앙열쇠도장 삼천리자전거","r":"경남","a":"창원시"},{"id":"11790840923","n":"지구자전거","r":"인천","a":"중구"},{"id":"11790862502","n":"지구한바퀴","r":"경기","a":"성남시"},{"id":"11790852296","n":"지니바이크","r":"인천","a":"남동구"},{"id":"11790833171","n":"지로바이시클","r":"인천","a":"서구"},{"id":"11790831262","n":"지사이클","r":"서울","a":"용산구"},{"id":"11790842399","n":"지성바이크","r":"부산","a":"기장군"},{"id":"11790846820","n":"지티아이에스","r":"경기","a":"구리시"},{"id":"11790842544","n":"진바이크","r":"충북","a":"청주시"},{"id":"11790856456","n":"진스포츠","r":"서울","a":"동대문구"},{"id":"11790841217","n":"진주프로바이클","r":"경남","a":"진주시"},{"id":"11790852112","n":"진흥스포츠","r":"서울","a":"강북구"},{"id":"11790862388","n":"짱바이크","r":"부산","a":"동래구"},{"id":"11790838320","n":"짱바이크","r":"경기","a":"오산시"},{"id":"11790838396","n":"짱스ZzangS","r":"서울","a":"광진구"},{"id":"11790838341","n":"착한바이크","r":"대구","a":"북구"},{"id":"11790838402","n":"찬성MTB","r":"서울","a":"성동구"},{"id":"11790856579","n":"창원바이크아카데미","r":"경남","a":"창원시"},{"id":"11790833230","n":"철s mtb","r":"서울","a":"동대문구"},{"id":"11790838296","n":"철수네자전거","r":"서울","a":"성북구"},{"id":"11790862421","n":"철이바이크","r":"대전","a":"서구"},{"id":"11790856695","n":"청계바이크","r":"서울","a":"성동구"},{"id":"11790852109","n":"청룡엠티비","r":"인천","a":"계양구"},{"id":"11790851531","n":"청학자전거","r":"인천","a":"중구"},{"id":"11790852219","n":"충청엠티비","r":"충남","a":"천안시"},{"id":"11790862264","n":"카페겁쟁이페달","r":"경기","a":"시흥시"},{"id":"11790838508","n":"칼리버바이크","r":"부산","a":"부산진구"},{"id":"11790856413","n":"캐논데일 스토어 바이크온 천안점","r":"충남","a":"천안시"},{"id":"11790853640","n":"캘빈바이크","r":"울산","a":"남구"},{"id":"11790838451","n":"커스텀박스","r":"전남","a":"여수시"},{"id":"11790853626","n":"케이바이크","r":"전북","a":"완주군"},{"id":"11790856603","n":"케이바이크(지오스포츠)","r":"경남","a":"김해시"},{"id":"11790831417","n":"케이트레이닝스쿨","r":"경기","a":"성남시"},{"id":"11790838262","n":"코끼리바이크","r":"울산","a":"북구"},{"id":"11790852061","n":"코리아바이크스쿨","r":"서울","a":"강동구"},{"id":"11790862364","n":"코모엔터프라이즈","r":"경기","a":"성남시"},{"id":"11790838511","n":"콤 바이크(KOM BIKE)","r":"서울","a":"강동구"},{"id":"11790852278","n":"콤마바이크","r":"서울","a":"서초구"},{"id":"11790833131","n":"쿠사바이크","r":"대구","a":"달성군"},{"id":"11790842504","n":"쿠샵(Ku#)","r":"경기","a":"성남시"},{"id":"11790831150","n":"큐벨로","r":"서울","a":"강남구"},{"id":"11790842580","n":"큐벨로(QVELO)","r":"서울","a":"노원구"},{"id":"11790838398","n":"클럽비","r":"대구","a":"달서구"},{"id":"11790842449","n":"클로버사이클링","r":"경기","a":"성남시"},{"id":"11790852107","n":"클린바이크","r":"경기","a":"용인시"},{"id":"11790831225","n":"킹바이크","r":"서울","a":"중랑구"},{"id":"11790856448","n":"킹바이크","r":"경남","a":"창원시"},{"id":"11790842556","n":"킹바이크(인창본점)","r":"경기","a":"구리시"},{"id":"11790838438","n":"킹바이크수택점","r":"경기","a":"구리시"},{"id":"11790856651","n":"킹사이클","r":"대구","a":"북구"},{"id":"11790852115","n":"타자자전거","r":"경남","a":"창원시"},{"id":"11790856575","n":"타타바이크","r":"부산","a":"북구"},{"id":"11790842554","n":"테이크아웃바이크","r":"경기","a":"고양시"},{"id":"11790846823","n":"통영바이크존","r":"경남","a":"통영시"},{"id":"11790831395","n":"투데이바이크","r":"충남","a":"천안시"},{"id":"11790852299","n":"투바이크(2bike)","r":"경기","a":"하남시"},{"id":"11790849283","n":"투휠바이크(TWO WHEEL BIKE)","r":"부산","a":"동래구"},{"id":"11790841109","n":"튠업 바이시클","r":"서울","a":"강동구"},{"id":"11790849399","n":"트라이메이트","r":"경기","a":"과천시"},{"id":"11790842555","n":"트레저헌터","r":"경기","a":"고양시"},{"id":"11790831302","n":"트윅스바이시클","r":"서울","a":"용산구"},{"id":"11790853654","n":"티모자전거","r":"전남","a":"여수시"},{"id":"11790841155","n":"파라마운트","r":"대구","a":"수성구"},{"id":"11790838442","n":"파워MTB","r":"부산","a":"수영구"},{"id":"11790849268","n":"팍스바이시클","r":"경기","a":"의왕시"},{"id":"11790838545","n":"팍스엠티비","r":"경북","a":"김천시"},{"id":"11790842493","n":"팩토리원","r":"서울","a":"은평구"},{"id":"11790862266","n":"퍼시로드(POSHroad)","r":"서울","a":"광진구"},{"id":"11790831340","n":"펀바이크","r":"부산","a":"부산진구"},{"id":"11790833183","n":"페달레","r":"경기","a":"하남시"},{"id":"11790852052","n":"페달링 마포점","r":"서울","a":"마포구"},{"id":"11790831223","n":"페달웍스 바이시클","r":"경기","a":"성남시"},{"id":"11790842397","n":"페달의민족","r":"경기","a":"하남시"},{"id":"11790852235","n":"페더바이크","r":"대구","a":"북구"},{"id":"11790849547","n":"페럴캣바이시클","r":"서울","a":"송파구"},{"id":"11790856696","n":"페이스클럽","r":"부산","a":"강서구"},{"id":"11790849487","n":"펠레스포츠","r":"서울","a":"동작구"},{"id":"11790833272","n":"평촌TBCC","r":"경기","a":"안양시"},{"id":"11790849501","n":"포디엄","r":"경남","a":"김해시"},{"id":"11790831394","n":"포디오","r":"서울","a":"송파구"},{"id":"11790831226","n":"포위브 F128","r":"서울","a":"강남구"},{"id":"11790841071","n":"푸른MTB","r":"대전","a":"중구"},{"id":"11790849528","n":"풀아우터","r":"서울","a":"광진구"},{"id":"11790856499","n":"프렌즈앤바이크","r":"충북","a":"청주시"},{"id":"11790849291","n":"프로바이크","r":"경기","a":"수원시"},{"id":"11790849339","n":"프로바이크(대전)","r":"대전","a":"대덕구"},{"id":"11790862438","n":"프로바이크버디","r":"경기","a":"가평군"},{"id":"11790833186","n":"프로사이클","r":"서울","a":"송파구"},{"id":"11790841133","n":"프로웍스","r":"경기","a":"성남시"},{"id":"11790849378","n":"프리바이크","r":"경남","a":"양산시"},{"id":"11790838448","n":"플라이트홀릭(리오바이크)","r":"경기","a":"여주시"},{"id":"11790842343","n":"플래툰사이클","r":"경기","a":"평택시"},{"id":"11790852101","n":"플랜비아이앤티","r":"경기","a":"김포시"},{"id":"11790852080","n":"플러쉬","r":"경기","a":"하남시"},{"id":"11790849516","n":"피스N발키리","r":"서울","a":"서초구"},{"id":"11790856654","n":"피스타","r":"서울","a":"광진구"},{"id":"11790862380","n":"피알바이크","r":"경남","a":"창원시"},{"id":"11790838411","n":"피알씨(PRC)자전거클럽","r":"서울","a":"마포구"},{"id":"11790856406","n":"피크바이크","r":"경기","a":"안양시"},{"id":"11790852196","n":"피크사이클링랩","r":"서울","a":"광진구"},{"id":"11790842427","n":"피타싸이클웍스","r":"경기","a":"고양시"},{"id":"11790838294","n":"필름바이크웍스","r":"서울","a":"영등포구"},{"id":"11790856584","n":"필바이크","r":"인천","a":"남동구"},{"id":"11790852085","n":"하늘자전거","r":"충남","a":"당진시"},{"id":"11790833402","n":"하비바이크","r":"서울","a":"광진구"},{"id":"11790856580","n":"하이랜드스포츠","r":"경기","a":"광주시"},{"id":"11790856740","n":"하트바이크","r":"경기","a":"동두천시"},{"id":"11790856409","n":"한가로이","r":"인천","a":"서구"},{"id":"11790842444","n":"한라사이클","r":"제주","a":"제주시"},{"id":"11790831165","n":"한세아이엔티","r":"경기","a":"고양시"},{"id":"11790856396","n":"함스바이크","r":"전북","a":"군산시"},{"id":"11790852121","n":"합정동볼륨샵","r":"서울","a":"마포구"},{"id":"11790852215","n":"해리커스텀바이크","r":"경기","a":"고양시"},{"id":"11790852105","n":"해안엘에스","r":"서울","a":"종로구"},{"id":"11790871628","n":"해피바이크","r":"부산","a":"수영구"},{"id":"11790842558","n":"해피바이크","r":"경기","a":"광주시"},{"id":"11790856625","n":"해피사이클","r":"대전","a":"유성구"},{"id":"11790852065","n":"행복자전거","r":"충남","a":"공주시"},{"id":"11790838392","n":"행복한자전거","r":"서울","a":"서초구"},{"id":"11790849442","n":"행복한자전거(Bike Holic)","r":"대구","a":"수성구"},{"id":"11790841067","n":"허슬린컴퍼니","r":"경기","a":"화성시"},{"id":"11790838462","n":"허슬린컴퍼니 (미스터바이크)","r":"경기","a":"화성시"},{"id":"11790852402","n":"헤이샵","r":"경기","a":"안산시"},{"id":"11790845348","n":"헤일로퍼포먼스사이클링","r":"서울","a":"강남구"},{"id":"11790853590","n":"헬로바이크","r":"경기","a":"이천시"},{"id":"11790841221","n":"헬로벨로 바이시클","r":"경기","a":"남양주시"},{"id":"11790841253","n":"헬로벨로(HelloVelo)","r":"경기","a":"남양주시"},{"id":"11790862367","n":"헬로우바이씨클","r":"경기","a":"광주시"},{"id":"11790833401","n":"현바이크","r":"서울","a":"중랑구"},{"id":"11790849264","n":"형제자전거","r":"경기","a":"화성시"},{"id":"11790841116","n":"호기자전거","r":"경남","a":"진주시"},{"id":"11790853652","n":"호바이크","r":"광주","a":"광산구"},{"id":"11790856583","n":"호반자전거","r":"강원","a":"춘천시"},{"id":"11790862361","n":"홀리데이바이크","r":"강원","a":"강릉시"},{"id":"11790849265","n":"홈바이크서울","r":"서울","a":"동작구"},{"id":"11790842336","n":"화신자전거 상무점","r":"광주","a":"서구"},{"id":"11790842559","n":"화신자전거 송정점","r":"광주","a":"광산구"},{"id":"11790849426","n":"화신자전거 수완점","r":"광주","a":"광산구"},{"id":"11790841059","n":"화신자전거 신가점","r":"광주","a":"광산구"},{"id":"11790833324","n":"화정엠티비","r":"경기","a":"고양시"},{"id":"11790833081","n":"환바이크","r":"부산","a":"수영구"},{"id":"11790849340","n":"환이바이크","r":"서울","a":"관악구"},{"id":"11790862158","n":"황바이크","r":"서울","a":"성동구"},{"id":"11790842496","n":"황산자전거","r":"경남","a":"양산시"},{"id":"11790862379","n":"휠윈드바이시클","r":"대구","a":"달서구"},{"id":"11790852238","n":"휠윈드바이시클(달서)","r":"대구","a":"달서구"},{"id":"11790831285","n":"히든바이크","r":"경북","a":"구미시"},{"id":"11790852185","n":"힐클라임 mtb","r":"경기","a":"수원시"}]</script>
+
+<script>
+/* ===== 설정: 고칠 일이 거의 없는 값 (README 「설정값」 참고) ===== */
+const CONFIG={
+  HOOK_SUBMIT:"https://hook.us2.make.com/vrwv593bodojltmn5by24lelz7m2gj6n", // 접수 → Make 7183259
+  HOOK_LOOKUP:"https://hook.us2.make.com/vv75leheu4z5k66ce4rnlmcu5ee9v4mt", // 시리얼 자동완성·진행 조회 → Make 7183230
+  KEY:"sbs-as-2026",            // Make 접수 시나리오 필터와 같은 값이어야 함
+  PHOTO_MAX:1600, PHOTO_QUALITY:0.82,
+  LOOKUP_DEBOUNCE_MS:600, TIMEOUT_MS:60000
+};
+/* 화면 문구 기본값. data/content.json 이 있으면 그 값으로 덮어씀 (먼데이 「지원사이트 콘텐츠」 보드에서 만들어짐) */
+const CONTENT={
+  notice:"",          // 맨 위 공지 띠. 비우면 안 보임
+  phone:"02-555-5199",
+  hours:"평일 09:00~18:00",
+  address:"서울시 강남구 강남대로 140길 46 G&A 학동파크 1층",
+  heroTitle:"무엇을 도와드릴까요?",
+  heroText:"제품을 고르면 자주 생기는 문제와 해결 방법을 먼저 보여 드려요. 해결이 안 되면 바로 A/S를 접수할 수 있어요.",
+  dealerFinder:"https://www.sanbadasports.co.kr/service/shop_list.php",
+  consent:"<b>개인정보 수집·이용 동의 (경영혁신팀 검토 전 임시 문구)</b><br>· 수집 항목: 성함 또는 대리점명, 연락처, 이메일, 제품 정보, 사진<br>· 이용 목적: A/S·워런티 접수 처리, 진행 안내(알림톡·문자), 제조사 보증 신청<br>· 보유 기간: 처리 완료 후 3년 (관계 법령에 따름)<br>동의하지 않으실 수 있으나, 동의하지 않으면 접수할 수 없습니다."
+};
+
+const BRANDS=[
+ {id:"cannondale",name:"Cannondale",kind:"로드 · MTB · 전기자전거",ebike:true,img:1,docs:["모델별 사용 설명서 (PDF)","전기자전거 배터리 충전·보관 안내","레프티 포크 정비 주기 안내"]},
+ {id:"birdy",name:"Birdy",kind:"폴딩",fold:true,img:1,docs:["접기·펴기 방법 (영상)","정기 점검 체크리스트"]},
+ {id:"strida",name:"Strida",kind:"폴딩",fold:true,img:1,docs:["접기·펴기 방법 (영상)","벨트 장력 조절 안내","타이어·튜브 규격표"]},
+ {id:"carryme",name:"Carry Me",kind:"폴딩",fold:true,img:1,docs:["접기·펴기 방법 (영상)","사용 설명서 (PDF)"]},
+ {id:"besv",name:"BESV",kind:"전기자전거",ebike:true,img:1,docs:["사용 설명서 (PDF)","배터리 충전·보관 안내","디스플레이 에러 코드표"]},
+ {id:"enve",name:"ENVE",kind:"휠 · 프레임 · 부품",wheel:true,img:1,docs:["튜브리스 장착 가이드","권장 타이어 공기압표","워런티 증빙 서류 안내"]},
+ {id:"chapter2",name:"Chapter2",kind:"로드 프레임",img:1,docs:["프레임 조립 토크표","사용 설명서 (PDF)"]},
+ {id:"linku",name:"LINK U",kind:"자전거",img:1,docs:["사용 설명서 (PDF)"]},
+ {id:"reach",name:"Reach",kind:"자전거",img:1,docs:["사용 설명서 (PDF)"]},
+ {id:"garmin",name:"GARMIN · Tacx",kind:"사이클링 컴퓨터 · 스마트 트레이너",tacx:true,img:0,docs:["Tacx 트레이너 캘리브레이션 방법","펌웨어 업데이트 방법"]}
+];
+const CATS=[
+ {id:"frame",name:"프레임·도장"},{id:"drive",name:"변속·브레이크"},{id:"wheel",name:"휠·타이어"},
+ {id:"noise",name:"소음·유격"},{id:"elec",name:"충전·모터·에러",only:"ebike"},{id:"fold",name:"접이 구조",only:"fold"},
+ {id:"parts",name:"부품 구매"},{id:"etc",name:"기타"}
+];
+// 출처: 먼데이 「전화 문의 표준 답변」 보드. 고객용 문구로 다듬음.
+const FAQ=[
+ {q:"전기자전거 충전이 안 돼요",t:"A/S·수리",b:["cannondale","besv"],c:["elec"],a:"1) 멀티탭 말고 벽 콘센트에 바로 꽂아 보세요.\n2) 다른 장소에서도 충전해 보세요. 특정 장소에서만 안 된다면 전원 환경 때문에 보호 기능이 작동한 것일 수 있습니다.\n3) 그래도 안 되면 다른 충전기로 시험하거나, 대리점을 통해 충전기·배터리를 보내 주시면 점검해 드립니다."},
+ {q:"전기자전거 모터가 작동하지 않아요 (배터리는 있음)",t:"A/S·수리",b:["cannondale","besv"],c:["elec"],a:"워크 모드도 안 되는지 먼저 확인하고, 펌웨어 업데이트를 해 보세요.\n그래도 안 되면 접수해 주세요. 화면에 에러 코드가 뜨면 코드가 보이게 사진을 찍어 함께 올려 주시면 빨라집니다."},
+ {q:"레프티 포크 정비 비용과 기간은 어떻게 되나요?",t:"A/S·수리",b:["cannondale"],c:["noise","drive"],a:"부품 교체가 없으면 소비자 부담 약 10만 원 선이며, 본사 입고 후 일주일 안에 작업합니다.\n누유 등으로 부품 교체가 필요하면 금액이 달라질 수 있습니다. 먼저 접수 후 본사로 보내 주세요."},
+ {q:"스트라이다 타이어·튜브 규격은? 16인치 순정 타이어가 있나요?",t:"제품·부품",b:["strida"],c:["wheel","parts"],a:"EVO 등 18인치 모델은 타이어 옆면에 사이즈가 음각으로 적혀 있고, 튜브는 슈레더 밸브 18인치입니다.\n16인치 순정 타이어는 단종되어 더 이상 들어오지 않습니다.\n구매는 직영 매장 또는 대리점에서 하실 수 있습니다."},
+ {q:"ENVE 휠 스포크가 끊어졌어요. 수리비는?",t:"A/S·수리",b:["enve"],c:["wheel"],a:"접수 후 휠을 보내 주시면 교체해 드립니다. 공임 5만 원이며 스포크·니플 값은 별도입니다.\n접수할 때 휠 모델, 앞/뒤, 디스크 여부, 허브를 알려 주세요."},
+ {q:"ENVE 워런티 처리는 얼마나 걸리고, 그동안 쓸 휠이 있나요?",t:"워런티",b:["enve"],c:["wheel","frame"],a:"접수 후 제조사 답변까지 보통 1~2주, 길면 4주 걸립니다.\n승인되면 대체 휠·림은 재고가 있으면 바로, 없으면 매달 들어오는 물량으로 처리합니다.\n필요하면 재고를 확인해 대여 휠을 빌려 드릴 수 있습니다.\nENVE는 수기 간이영수증을 인정하지 않습니다. 카드 매출전표, 현금영수증, 세금계산서 중 하나를 첨부해 주세요."},
+ {q:"Tacx 트레이너 A/S는 어떻게 접수하나요?",t:"A/S·수리",b:["garmin"],c:["etc"],a:"본사 또는 직영점에 직접 방문하거나 택배로 보내 주시면 접수됩니다.\n· 본사: 서울시 강남구 강남대로 140길 46 G&A 학동파크 1층 산바다스포츠 기술팀\n· 직영점: 서울 영등포구 국제금융로8길 16 신영증권 지하1층, 위클 여의도\n방문하실 때는 1~2일 전에 전화로 예약해 주세요."},
+ {q:"가민 제품(엣지·랠리 등) A/S는 어디서 하나요?",t:"타사 안내",b:["garmin"],c:["etc"],a:"가민 제품은 가민코리아 홈페이지에서 직접 온라인 접수해 주세요. 마린(낚시·선박) 장비는 GM마린에서 접수합니다.\nTacx Neo 초기 모델(Neo 1 등)은 단종으로 부품이 없어 수리가 어렵고 유상 리퍼만 가능할 수 있습니다. 먼저 펌웨어 업데이트를 확인해 주세요."},
+ {q:"재도장해도 워런티가 유지되나요?",t:"워런티",b:[],c:["frame"],a:"재도장하면 워런티 권한이 없어질 수 있습니다. 재도장 전에 먼저 문의해 주세요."},
+ {q:"증상만 듣고 워런티인지 알 수 있나요?",t:"워런티",b:[],c:["frame","etc"],a:"전화나 글만으로는 판단하기 어렵습니다. 사진과 영수증을 함께 접수해 주시면 본사가 확인한 뒤 워런티 여부를 안내해 드립니다."},
+ {q:"배터리를 사설 업체에서 수리해도 되나요?",t:"A/S·수리",b:["cannondale","besv"],c:["elec"],a:"권장하지 않습니다. 사설 수리 후 생기는 문제는 보증에서 모두 제외되며, 안전 위험이 있을 수 있습니다."},
+ {q:"소비자가 직접 접수할 수 있나요?",t:"접수 방법",b:[],c:["etc"],a:"이 페이지에서 소비자도 직접 접수할 수 있습니다. 다만 진단이 필요한 증상은 구매하신 대리점(또는 가까운 취급 대리점)에서 먼저 보고 본사로 보내는 것이 가장 빠릅니다."},
+ {q:"구매한 대리점이 문을 닫았거나 취급을 안 한다고 해요",t:"접수 방법",b:[],c:["etc"],a:"다른 취급 대리점에서도 접수할 수 있습니다. 대리점 찾기에서 가까운 곳을 찾아 방문하시고, 구매 영수증을 꼭 챙겨 주세요."},
+ {q:"부품만 따로 사고 싶어요",t:"제품·부품",b:[],c:["parts"],a:"부품은 대리점을 통해 주문합니다. 정확한 부품 확인을 위해 제품 모델명과 부품 사진을 카카오톡 채널로 보내 주세요.\n스프라켓·타이어 같은 범용 부품은 가까운 자전거 매장에서도 살 수 있습니다."},
+ {q:"정품등록이 안 되거나 시리얼 번호를 못 찾겠어요",t:"정품등록",b:[],c:["etc"],a:"대리점명이 검색되지 않으면 대리점 조회 없이 정보만 넣어 등록하세요. 구매일은 나중에 고칠 수 있습니다.\n브랜드별 시리얼 위치는 각 브랜드 페이지의 「시리얼 위치」에서 사진으로 확인할 수 있습니다.\nENVE 휠은 박스·QR 종이가 없으면 림테이프 아래에, Birdy는 도장 때문에 안 보이면 BB 아래 사진과 박스 시리얼 사진으로 등록합니다."},
+ {q:"접수한 건의 진행 상황은 어떻게 확인하나요?",t:"진행 문의",b:[],c:["etc"],a:"상단 「진행 조회」에서 접수번호(예: 261125-07)와 연락처 뒤 4자리로 확인할 수 있습니다. 상태가 바뀌면 카카오 알림톡으로도 알려 드립니다.\n제조사 확인이 필요한 건은 보통 1~2주, 길면 4주 걸립니다."},
+ {q:"사진·영상은 어디로 보내면 되나요?",t:"접수 방법",b:[],c:["etc"],a:"접수할 때 사진 칸에 바로 올려 주세요. 접수 뒤에 더 보내야 하면 알림톡의 「추가 자료 제출」 링크로 보내면 해당 접수 건에 자동으로 붙습니다.\n접수 전 상담은 카카오톡 채널로 받습니다."}
+];
+/* ===== 데이터 불러오기: data/*.json 이 있으면 쓰고, 없으면(파일로 열었을 때 등) 이 파일 안의 기본값을 씀 ===== */
+let DEALERS=JSON.parse(document.getElementById("dealers-embed").textContent);
+async function getJSON(p){if(location.protocol==="file:")return null;try{const r=await fetch(p+"?v="+Math.floor(Date.now()/6e5),{cache:"no-store"});if(!r.ok)return null;return await r.json()}catch(e){return null}}
+async function loadData(){
+  const [d,c]=await Promise.all([getJSON("data/dealers.json"),getJSON("data/content.json")]);
+  if(Array.isArray(d)&&d.length>50)DEALERS=d;
+  if(c&&typeof c==="object"){
+    if(c.settings)Object.assign(CONTENT,c.settings);
+    if(Array.isArray(c.faq)&&c.faq.length){FAQ.length=0;c.faq.forEach(x=>FAQ.push(x))}
+    if(Array.isArray(c.brands)&&c.brands.length){c.brands.forEach(nb=>{const o=BRANDS.find(b=>b.id===nb.id);if(o)Object.assign(o,nb);else BRANDS.push(nb)});
+      BRANDS.sort((a,b)=>(a.order??99)-(b.order??99))}
+  }
+  const n=document.getElementById("notice");if(CONTENT.notice){n.textContent=CONTENT.notice;n.hidden=false}
+  document.getElementById("foot").textContent=`산바다스포츠 기술팀 · ${CONTENT.address} · 대표 ${CONTENT.phone} · ${CONTENT.hours}`;
+}
+
+const $=s=>document.querySelector(s);
+const app=$("#app");
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const brandOf=id=>BRANDS.find(b=>b.id===id);
+const faqItem=(f,showBrand)=>`<details><summary><span class="tag">${esc(f.t)}</span>${esc(f.q)}</summary><div class="ans">${esc(f.a)}${showBrand&&f.b.length?`<span class="meta">해당 브랜드: ${f.b.map(x=>brandOf(x).name).join(", ")}</span>`:""}</div></details>`;
+const catsFor=b=>CATS.filter(c=>!c.only||(b&&b[c.only]));
+const faqFor=(bid,cat)=>FAQ.filter(f=>(!bid||!f.b.length||f.b.includes(bid))&&(!cat||f.c.includes(cat)));
+
+/* ---------- 홈 ---------- */
+function home(){
+  app.innerHTML=`
+  <section class="hero wrap">
+    <h1>${esc(CONTENT.heroTitle)}</h1>
+    <p>${esc(CONTENT.heroText)}</p>
+    <div class="search"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="text" placeholder="증상이나 궁금한 점을 검색하세요 (예: 충전, 스포크, 시리얼)" aria-label="도움말 검색"></div>
+    <div class="results faq" id="qres" hidden></div>
+  </section>
+  <section class="sec wrap"><h2>제품별 지원</h2>
+    <div class="brands">${BRANDS.map(b=>`<a class="brand" href="#brand-${b.id}"><b>${esc(b.name)}</b><small>${esc(b.kind)}</small></a>`).join("")}</div>
+  </section>
+  <section class="sec wrap"><h2>어떻게 도와드릴까요?</h2>
+    <div class="ways">
+      <div class="way"><h3>온라인 A/S 접수</h3><p>사진과 증상을 올리면 접수번호가 바로 나오고, 진행 상황은 알림톡으로 알려 드려요.</p><a class="btn small" href="#apply">접수 시작</a></div>
+      <div class="way"><h3>진행 조회</h3><p>접수번호와 연락처 뒤 4자리로 지금 어디까지 진행됐는지 확인해요.</p><a class="btn small ghost" href="#track">조회하기</a></div>
+      <div class="way"><h3>가까운 대리점</h3><p>진단이 필요한 증상은 가까운 취급 대리점에서 먼저 보는 게 가장 빨라요.</p><a class="btn small ghost" href="${esc(CONTENT.dealerFinder)}" target="_blank" rel="noopener">대리점 찾기</a></div>
+      <div class="way"><h3>카카오톡 상담</h3><p>접수 전에 궁금한 점은 카카오톡 채널 「산바다스포츠기술팀」으로 물어보세요.</p><span class="hint">${esc(CONTENT.hours)}</span></div>
+    </div>
+  </section>
+  <section class="sec wrap"><h2>자주 묻는 질문</h2><div class="faq">${FAQ.filter(f=>!f.b.length).map(f=>faqItem(f)).join("")}</div></section>`;
+  const q=$("#q"),r=$("#qres");
+  q.addEventListener("input",()=>{
+    const v=q.value.trim();
+    if(!v){r.hidden=true;return}
+    const hit=FAQ.filter(f=>(f.q+f.a+f.t+f.b.map(x=>brandOf(x).name).join(" ")).toLowerCase().includes(v.toLowerCase()));
+    r.hidden=false;
+    r.innerHTML=hit.length?hit.map(f=>faqItem(f,true)).join(""):`<p class="hint" style="padding:12px 0">「${esc(v)}」에 대한 도움말이 아직 없어요. <a href="#apply">바로 접수하기</a></p>`;
+  });
+}
+
+/* ---------- 브랜드 ---------- */
+let brandTab="issues",brandCat=null;
+function brand(id){
+  const b=brandOf(id); if(!b){location.hash="home";return}
+  const tabs=[["issues","자주 발생하는 문제"],["serial","시리얼 위치"],["docs","매뉴얼·자료"]];
+  const cats=catsFor(b);
+  let body="";
+  if(brandTab==="issues"){
+    const list=faqFor(b.id,brandCat);
+    body=`<div class="chips" role="group" aria-label="증상 분류"><button class="chip" data-cat="" aria-pressed="${!brandCat}">전체</button>${cats.map(c=>`<button class="chip" data-cat="${c.id}" aria-pressed="${brandCat===c.id}">${c.name}</button>`).join("")}</div>
+      <div class="faq">${list.length?list.map(f=>faqItem(f)).join(""):`<p class="hint" style="padding:14px 0">이 분류에는 아직 안내가 없어요. 바로 접수해 주시면 담당자가 확인해 드려요.</p>`}</div>`;
+  }else if(brandTab==="serial"){
+    body=b.img?`<p style="margin-top:0">접수할 때 시리얼(프레임) 번호 사진이 꼭 필요해요. 아래 위치에서 찾아 주세요.</p><div class="serialimg"><img src="img/serial-${b.id}.jpg" alt="${esc(b.name)} 시리얼 번호 위치 안내" loading="lazy"></div>`
+      :`<div class="note">가민·Tacx 제품은 기기 뒷면 라벨 또는 설정 메뉴의 「기기 정보」에서 시리얼 번호를 확인할 수 있어요.</div>`;
+  }else{
+    body=`<div class="docs">${(b.docs||[]).map(d=>{const t=typeof d==="string"?d:d.t,u=typeof d==="string"?"":(d.u||"");
+        return u&&/^https?:\/\//.test(u)?`<a class="doc" href="${esc(u)}" target="_blank" rel="noopener"><div>${esc(t)}</div><span>열기 ↗</span></a>`:`<div class="doc"><div>${esc(t)}</div><span>자료 준비 중</span></div>`}).join("")}</div>`;
+  }
+  app.innerHTML=`<div class="wrap">
+    <div class="crumb"><a href="#home">지원 홈</a> › ${esc(b.name)}</div>
+    <div class="bhead"><div><h1>${esc(b.name)} 지원</h1><p>${esc(b.kind)}</p></div>
+      ${b.id==="garmin"?"":`<a class="btn" href="#apply-${b.id}">${esc(b.name)} A/S 접수</a>`}</div>
+    ${b.id==="garmin"?`<div class="note warn" style="margin-top:12px">가민 기기(엣지·랠리 등)는 가민코리아에서 직접 접수해요. Tacx 트레이너만 산바다스포츠에서 접수합니다.</div>`:""}
+    <div class="tabs" role="tablist">${tabs.map(([k,n])=>`<button role="tab" data-tab="${k}" aria-selected="${brandTab===k}">${n}</button>`).join("")}</div>
+    <div class="panel">${body}</div>
+    <div class="cta"><div><h3>해결되지 않았나요?</h3><p>사진과 증상을 올려 주시면 담당자가 확인 후 알림톡으로 안내해 드려요.</p></div>
+      <a class="btn" href="#apply-${b.id}">A/S 접수하기</a></div>
+  </div>`;
+  app.querySelectorAll("[data-tab]").forEach(t=>t.onclick=()=>{brandTab=t.dataset.tab;brand(id)});
+  app.querySelectorAll("[data-cat]").forEach(t=>t.onclick=()=>{brandCat=t.dataset.cat||null;brand(id)});
+}
+
+/* ---------- 접수 ---------- */
+const STEP_NAMES=["누가 접수하나요","제품과 증상","사진","연락처와 동의","확인"];
+let F,step,sending=false;
+function resetForm(bid){F={who:"",kind:"",brand:bid||"",model:"",serial:"",product:"",serialByPhoto:false,buy:"",cat:"",symptom:"",photos:{},name:"",dealer:"",dealerName:"",staff:"",cname:"",phone:"",email:"",agree:false};step=0}
+resetForm();
+const PHOTO_SLOTS=[["whole","제품 전체"],["serial","시리얼 번호"],["issue","문제 부위 1"],["issue2","문제 부위 2"],["issue3","문제 부위 3"],["receipt","구매 영수증"]];
+function needPhotos(){const n=[];if(F.kind==="warranty")n.push("whole","serial","issue","receipt");else if(F.serialByPhoto)n.push("serial");return n}
+function apply(bid){
+  if(bid!==undefined&&bid!==F.brand&&step===0)F.brand=bid;
+  const b=brandOf(F.brand);
+  const opt=(key,val,title,sub)=>`<button type="button" class="opt" data-k="${key}" data-v="${val}" aria-pressed="${F[key]===val}"><b>${title}</b>${sub?`<small>${sub}</small>`:""}</button>`;
+  let html="";
+  if(step===0){
+    html=`<h2>누가 접수하나요?</h2><p class="sub">접수하시는 분에 따라 필요한 정보가 달라져요.</p>
+      <div class="field"><span class="lbl">접수처<span class="req">*</span></span><div class="choice">
+        ${opt("who","consumer","소비자","제품을 쓰시는 분")}${opt("who","dealer","대리점","판매 대리점·매장")}${opt("who","hq","본사 직영","직영점 접수")}</div></div>
+      <div class="field"><span class="lbl">접수 구분<span class="req">*</span></span><div class="choice">
+        ${opt("kind","as","일반 A/S","수리·점검·유상 정비")}${opt("kind","warranty","워런티","제품 결함 보증 신청")}</div>
+        <span class="hint">헷갈리면 일반 A/S로 접수하세요. 본사에서 확인 후 워런티로 바꿔 드려요.</span></div>
+      <div class="field"><span class="lbl">브랜드<span class="req">*</span></span><div class="choice">
+        ${BRANDS.filter(x=>x.id!=="garmin").map(x=>opt("brand",x.id,x.name,x.kind)).join("")}${opt("brand","tacx","Tacx","스마트 트레이너")}</div></div>`;
+  }else if(step===1){
+    const cats=catsFor(b);
+    const tips=F.cat?faqFor(F.brand,F.cat).slice(0,3):[];
+    html=`<h2>제품과 증상</h2><p class="sub">${b?esc(b.name):"Tacx"} 제품 정보를 알려 주세요.</p>
+      <div class="field"><label for="f-serial">프레임(시리얼) 번호${F.serialByPhoto?"":'<span class="req">*</span>'}</label>
+        <div class="ac"><input id="f-serial" class="mono" type="text" value="${esc(F.serial)}" placeholder="예: TE14640" autocomplete="off" ${F.serialByPhoto?"disabled":""}><div id="sl" class="dealer-list" hidden></div></div>
+        <span class="hint" id="s-hint">${F.product?`선택한 제품: <b>${esc(F.product)}</b>`:"3자 이상 넣으면 등록된 제품 번호를 찾아 드려요."}</span>
+        <label class="check" style="margin-top:6px"><input id="f-byphoto" type="checkbox" ${F.serialByPhoto?"checked":""}><span>번호를 못 찾겠어요. 다음 단계에서 시리얼 사진을 올릴게요 <span class="hint">(사진에서 번호를 자동으로 읽어요)</span></span></label>
+        ${b&&b.img?`<details><summary class="hint" style="cursor:pointer">시리얼 번호는 어디에 있나요?</summary><div class="serialimg" style="margin-top:8px"><img src="img/serial-${b.id}.jpg" alt="${esc(b.name)} 시리얼 위치"></div></details>`:""}</div>
+      <div class="field"><label for="f-model">모델명${F.product||F.serialByPhoto?"":'<span class="req">*</span>'}</label><input id="f-model" type="text" value="${esc(F.model)}" placeholder="예: Synapse Carbon 3, P40, SES 4.5"><span class="hint">시리얼 번호를 목록에서 골랐거나 시리얼 사진을 올리면 비워도 돼요.</span></div>
+      <div class="field"><label for="f-buy">구매일${F.kind==="warranty"?'<span class="req">*</span>':""}</label><input id="f-buy" type="date" value="${esc(F.buy)}" max="${new Date().toISOString().slice(0,10)}"></div>
+      <div class="field"><span class="lbl">어떤 문제인가요?<span class="req">*</span></span><div class="chips" style="margin:0">${cats.map(c=>`<button type="button" class="chip" data-cat="${c.id}" aria-pressed="${F.cat===c.id}">${c.name}</button>`).join("")}</div>
+        ${tips.length?`<div class="tips"><h4>접수 전에 확인해 보세요</h4><ul>${tips.map(t=>`<li><b>${esc(t.q)}</b><br>${esc(t.a.split("\n")[0])}</li>`).join("")}</ul></div>`:""}</div>
+      <div class="field"><label for="f-sym">증상 설명<span class="req">*</span></label><textarea id="f-sym" maxlength="2000" placeholder="언제부터, 어떤 상황에서, 어떻게 문제가 생기는지 적어 주세요.">${esc(F.symptom)}</textarea></div>`;
+  }else if(step===2){
+    const need=needPhotos();
+    const slot=(k,t)=>{const p=F.photos[k];const nd=need.includes(k);return `<label class="drop ${p?"has":""}" data-slot="${k}"><input type="file" accept="image/*" data-photo="${k}">${p?`<img src="data:image/jpeg;base64,${p}" alt="">`:""}<b>${t}${nd?'<span class="req">*</span>':""}</b><span class="x">${p?"바꾸기":"눌러서 올리기"}</span></label>`};
+    const w=F.kind==="warranty";
+    html=`<h2>사진</h2><p class="sub">${w?"워런티 접수는 제품 전체, 시리얼 번호, 문제 부위 사진과 구매 영수증이 꼭 필요해요.":F.serialByPhoto?"시리얼 번호 사진을 꼭 올려 주세요. 다른 사진도 있으면 진단이 빨라요.":"사진이 있으면 진단이 훨씬 빨라요. 없으면 건너뛰어도 돼요."}</p>
+      <div class="photos">${PHOTO_SLOTS.filter(([k])=>k!=="receipt"||true).map(([k,t])=>slot(k,t)).join("")}</div>
+      <p class="hint" style="margin-top:10px">사진은 올릴 때 자동으로 줄여서 보내요. 소음 영상은 접수 후 알림톡의 「추가 자료 제출」로 보내 주세요.</p>
+      ${F.brand==="enve"?`<div class="note warn" style="margin-top:14px">ENVE는 수기 간이영수증을 인정하지 않아요. 카드 매출전표, 현금영수증, 세금계산서 중 하나를 올려 주세요.</div>`:""}
+      ${F.brand==="cannondale"?`<div class="note warn" style="margin-top:14px">Cannondale은 종이 워런티 카드를 증빙으로 인정하지 않아요.</div>`:""}`;
+  }else if(step===3){
+    const c=F.who==="consumer",d=F.who==="dealer";
+    html=`<h2>연락처와 동의</h2><p class="sub">${d?"진행 상황은 대리점 등록 연락처로 카카오 알림톡(안 되면 문자)을 보내 드려요.":"진행 상황은 이 연락처로 카카오 알림톡(안 되면 문자)을 보내 드려요."}</p>
+      ${d?`<div class="field"><label for="f-dealer">대리점<span class="req">*</span></label><div class="ac"><input id="f-dealer" type="text" value="${esc(F.dealerName)}" placeholder="대리점 이름이나 지역을 넣고 목록에서 골라 주세요" autocomplete="off"><div id="dl" class="dealer-list" hidden></div></div>
+          <span class="hint" id="d-hint">${F.dealer?"✓ 선택됨. 대리점 연락처는 등록 정보로 자동 입력돼요.":"목록에 없으면 카카오톡 채널이나 02-555-5199로 알려 주세요."}</span></div>
+          <div class="field"><label for="f-staff">매장 담당자</label><input id="f-staff" type="text" value="${esc(F.staff)}"></div>`:""}
+      ${c?`<div class="field"><label for="f-name">성함<span class="req">*</span></label><input id="f-name" type="text" value="${esc(F.name)}" autocomplete="name"></div>`
+        :`<div class="field"><label for="f-cname">소비자 성함<span class="req">*</span></label><input id="f-cname" type="text" value="${esc(F.cname)}"></div>`}
+      ${F.who==="hq"?`<div class="field"><label for="f-staff">접수 직원</label><input id="f-staff" type="text" value="${esc(F.staff)}"></div>`:""}
+      <div class="field"><label for="f-phone">${c?"연락처":"소비자 연락처"}<span class="req">*</span></label><input id="f-phone" type="tel" inputmode="numeric" value="${esc(F.phone)}" placeholder="010-0000-0000" autocomplete="tel"></div>
+      <div class="field"><label for="f-email">이메일</label><input id="f-email" type="email" value="${esc(F.email)}" placeholder="선택 항목" autocomplete="email"></div>
+      <div class="consent" id="ctext">${CONTENT.consent}</div>
+      <label class="check"><input id="f-agree" type="checkbox" ${F.agree?"checked":""}><span>개인정보 수집·이용에 동의합니다<span class="req">*</span> <a href="#" id="cshow">내용 보기</a></span></label>
+      <input type="text" id="f-hp" name="hp" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px">`;
+  }else{
+    const ph=Object.keys(F.photos).length;
+    const row=(k,v)=>`<dt>${k}</dt><dd>${v?esc(v):"<span class='hint'>없음</span>"}</dd>`;
+    html=`<h2>접수 내용 확인</h2><p class="sub">맞는지 확인하고 접수해 주세요.</p>
+      <dl class="review">${row("접수처",{consumer:"소비자",dealer:"대리점",hq:"본사 직영"}[F.who])}${row("구분",F.kind==="warranty"?"워런티":"일반 A/S")}
+      ${row("브랜드",b?b.name:"Tacx")}${row("모델",F.model||F.product)}<dt>시리얼 번호</dt><dd class="mono">${F.serial?esc(F.serial):F.serialByPhoto?"<span class='hint'>사진으로 확인</span>":""}</dd>${row("구매일",F.buy)}
+      ${row("문제 분류",(CATS.find(c=>c.id===F.cat)||{}).name)}${row("증상",F.symptom)}${row("사진",ph?ph+"장":"")}
+      ${F.who==="dealer"?row("대리점",F.dealerName+(F.staff?" ("+F.staff+")":"")):""}${row(F.who==="consumer"?"성함":"소비자 성함",F.who==="consumer"?F.name:F.cname)}${row("연락처",F.phone)}${row("이메일",F.email)}</dl>`;
+  }
+  app.innerHTML=`<div class="wrap narrow">
+    <div class="crumb"><a href="#home">지원 홈</a> › A/S 접수</div>
+    <div class="steps">${STEP_NAMES.map((_,i)=>`<i class="${i<=step?"on":""}"></i>`).join("")}</div>
+    <div class="stepname">${step+1}/${STEP_NAMES.length} · ${STEP_NAMES[step]}</div>
+    <form class="card" id="wiz" novalidate>${html}
+      <div class="err" id="err" role="alert"></div>
+      <div class="nav-btns">${step?`<button type="button" class="btn ghost" id="back">이전</button>`:"<span></span>"}
+        <button type="submit" class="btn" id="go">${step===4?"접수하기":"다음"}</button></div></form></div>`;
+  bindApply();
+}
+function save(){
+  const v=id=>{const e=document.getElementById(id);return e?e.value.trim():undefined};
+  [["model","f-model"],["serial","f-serial"],["buy","f-buy"],["symptom","f-sym"],["name","f-name"],["cname","f-cname"],["staff","f-staff"],["phone","f-phone"],["email","f-email"]]
+    .forEach(([k,id])=>{const x=v(id);if(x!==undefined)F[k]=x});
+  const a=document.getElementById("f-agree"); if(a)F.agree=a.checked;
+  const hp=document.getElementById("f-hp"); if(hp)F.hp=hp.value;
+}
+const digits=s=>String(s||"").replace(/\D/g,"");
+function check(){
+  const w=F.kind==="warranty";
+  if(step===0){if(!F.who)return"접수처를 골라 주세요.";if(!F.kind)return"접수 구분을 골라 주세요.";if(!F.brand)return"브랜드를 골라 주세요."}
+  if(step===1){
+    if(!F.serial&&!F.serialByPhoto)return"시리얼 번호를 적어 주세요. 못 찾겠으면 「번호를 못 찾겠어요」를 눌러 사진으로 올려 주세요.";
+    if(F.serial&&!/^[A-Za-z0-9\-\/ ]{3,40}$/.test(F.serial))return"시리얼 번호는 영문과 숫자로만 적어 주세요.";
+    if(!F.model&&!F.product&&!F.serialByPhoto)return"모델명을 적어 주세요.";
+    if(w&&!F.buy)return"워런티 접수는 구매일이 필요해요.";if(!F.cat)return"문제 분류를 골라 주세요.";if(F.symptom.length<5)return"증상을 조금 더 자세히 적어 주세요."}
+  if(step===2){const miss=needPhotos().filter(k=>!F.photos[k]);
+    if(miss.length){miss.forEach(k=>{const e=document.querySelector(`[data-slot="${k}"]`);if(e)e.classList.add("need")});
+      return w?"워런티 접수는 제품 전체, 시리얼, 문제 부위 사진과 영수증이 모두 필요해요.":"시리얼 번호 사진을 올려 주세요."}}
+  if(step===3){
+    if(F.who==="dealer"&&!F.dealer)return"대리점을 목록에서 골라 주세요.";
+    if(F.who==="consumer"&&!F.name)return"성함을 적어 주세요.";
+    if(F.who!=="consumer"&&!F.cname)return"소비자 성함을 적어 주세요.";
+    if(!/^0\d{8,11}$/.test(digits(F.phone)))return"연락처를 확인해 주세요. (예: 010-1234-5678)";
+    if(F.email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(F.email))return"이메일 주소를 확인해 주세요.";
+    if(!F.agree)return"개인정보 수집·이용에 동의해야 접수할 수 있어요."}
+  return"";
+}
+/* 사진 줄이기: 긴 변 1600px JPEG, base64(앞부분 data: 없이) */
+function shrink(file){return new Promise((ok,no)=>{const u=URL.createObjectURL(file);const im=new Image();
+  im.onload=()=>{const M=CONFIG.PHOTO_MAX;let w=im.naturalWidth,h=im.naturalHeight;const s=Math.min(1,M/Math.max(w,h));w=Math.round(w*s);h=Math.round(h*s);
+    const c=document.createElement("canvas");c.width=w;c.height=h;const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,w,h);x.drawImage(im,0,0,w,h);URL.revokeObjectURL(u);
+    ok(c.toDataURL("image/jpeg",CONFIG.PHOTO_QUALITY).split(",")[1])};
+  im.onerror=()=>{URL.revokeObjectURL(u);no(new Error("사진을 열 수 없어요. JPG나 PNG로 올려 주세요."))};im.src=u})}
+async function post(url,data){
+  const body=new URLSearchParams();Object.entries(data).forEach(([k,v])=>body.append(k,v==null?"":String(v)));
+  const ctl=new AbortController();const t=setTimeout(()=>ctl.abort(),CONFIG.TIMEOUT_MS);
+  try{const r=await fetch(url,{method:"POST",body,signal:ctl.signal});const txt=await r.text();
+    try{return JSON.parse(txt)}catch(e){return{ok:r.ok,raw:txt}}}finally{clearTimeout(t)}}
+/* 시리얼 자동완성 */
+const serialCache={};let serialTimer=null,serialSeq=0;
+async function serialLookup(q){
+  const key=q.toUpperCase();if(serialCache[key])return serialCache[key];
+  const r=await post(CONFIG.HOOK_LOOKUP,{a:"serial",q});
+  const out=[];((r&&r.boards)||[]).forEach(b=>((b.items_page||{}).items||[]).forEach(it=>{const g=id=>((it.c||[]).find(c=>c.id===id)||{}).text||"";out.push({serial:g("serial").toUpperCase(),name:g("product_name")})}));
+  return serialCache[key]=out.slice(0,8);
+}
+function dealerMatch(v){v=v.replace(/\s/g,"").toLowerCase();if(!v)return[];
+  return DEALERS.filter(d=>(d.n+d.r+d.a).replace(/\s/g,"").toLowerCase().includes(v)).slice(0,30)}
+function bindApply(){
+  app.querySelectorAll(".opt").forEach(o=>o.onclick=()=>{save();F[o.dataset.k]=o.dataset.v;apply()});
+  app.querySelectorAll(".chip[data-cat]").forEach(o=>o.onclick=()=>{save();F.cat=o.dataset.cat;apply()});
+  app.querySelectorAll("[data-photo]").forEach(inp=>inp.onchange=async()=>{const f=inp.files[0];if(!f)return;save();
+    const lab=inp.closest(".drop");lab.querySelector(".x").textContent="줄이는 중…";
+    try{F.photos[inp.dataset.photo]=await shrink(f);apply()}catch(e){$("#err").textContent=e.message;lab.querySelector(".x").textContent="다시 올리기"}});
+  const cs=$("#cshow"); if(cs)cs.onclick=e=>{e.preventDefault();$("#ctext").classList.toggle("open")};
+  const bp=$("#f-byphoto"); if(bp)bp.onchange=()=>{save();F.serialByPhoto=bp.checked;if(bp.checked){F.serial="";F.product=""}apply()};
+  const si=$("#f-serial"); if(si){const box=$("#sl");
+    si.oninput=()=>{F.product="";$("#s-hint").textContent="3자 이상 넣으면 등록된 제품 번호를 찾아 드려요.";clearTimeout(serialTimer);const q=si.value.trim();
+      if(q.length<3||!/^[A-Za-z0-9\-]+$/.test(q)){box.hidden=true;return}
+      const my=++serialSeq;serialTimer=setTimeout(async()=>{box.hidden=false;box.innerHTML=`<span class="hint" style="display:block;padding:10px 13px">찾는 중…</span>`;
+        let list=[];try{list=await serialLookup(q)}catch(e){}
+        if(my!==serialSeq)return;
+        box.innerHTML=list.length?list.map(x=>`<button type="button" data-s="${esc(x.serial)}" data-n="${esc(x.name)}"><span class="mono">${esc(x.serial)}</span> <small class="hint">${esc(x.name)}</small></button>`).join("")
+          :`<span class="hint" style="display:block;padding:10px 13px">등록된 번호에서 찾지 못했어요. 적은 번호 그대로 접수돼요.</span>`;
+        box.querySelectorAll("button").forEach(bt=>bt.onclick=()=>{si.value=bt.dataset.s;F.serial=bt.dataset.s;F.product=bt.dataset.n;box.hidden=true;
+          save();if(!F.model)F.model=F.product;apply()})},CONFIG.LOOKUP_DEBOUNCE_MS)}}
+  const dl=$("#f-dealer"); if(dl){const box=$("#dl");
+    dl.oninput=()=>{F.dealer="";F.dealerName=dl.value.trim();$("#d-hint").textContent="목록에서 골라 주세요.";const hit=dealerMatch(dl.value);box.hidden=!dl.value.trim();
+      box.innerHTML=hit.length?hit.map(d=>`<button type="button" data-id="${esc(d.id)}" data-n="${esc(d.n)}">${esc(d.n)} <small class="hint">${esc([d.r,d.a].filter(Boolean).join(" "))}</small></button>`).join("")
+        :`<span class="hint" style="display:block;padding:10px 13px">찾는 대리점이 없어요. 이름을 다르게 넣어 보거나 카카오톡 채널로 알려 주세요.</span>`;
+      box.querySelectorAll("button").forEach(bt=>bt.onclick=()=>{F.dealer=bt.dataset.id;F.dealerName=bt.dataset.n;dl.value=bt.dataset.n;box.hidden=true;$("#d-hint").textContent="✓ 선택됨. 대리점 연락처는 등록 정보로 자동 입력돼요."})}}
+  const back=$("#back"); if(back)back.onclick=()=>{save();step--;apply();scrollTo(0,0)};
+  $("#wiz").onsubmit=e=>{e.preventDefault();if(sending)return;save();const m=check();if(m){$("#err").textContent=m;return}
+    if(step<4){step++;apply();scrollTo(0,0)}else submit()};
+}
+async function submit(){
+  sending=true;const go=$("#go");go.disabled=true;go.textContent="접수하는 중… (15초쯤 걸려요)";$("#err").textContent="";
+  const brandId=F.brand==="tacx"?"tacx":F.brand;
+  const data={k:CONFIG.KEY,hp:F.hp||"",who:F.who,kind:F.kind,brand:brandId,model:F.model||F.product,serial:F.serial,buy:F.buy,
+    cat:(CATS.find(c=>c.id===F.cat)||{}).name||"기타",symptom:F.symptom,name:F.name,dealer:F.dealer,dealer_name:F.dealerName,staff:F.staff,cname:F.cname,
+    phone:digits(F.phone),email:F.email,agree:F.agree?"1":"",nphotos:Object.keys(F.photos).length,product_name:F.product,
+    ph_whole:F.photos.whole||"",ph_serial:F.photos.serial||"",ph_issue:F.photos.issue||"",ph_issue2:F.photos.issue2||"",ph_issue3:F.photos.issue3||"",ph_receipt:F.photos.receipt||""};
+  try{const r=await post(CONFIG.HOOK_SUBMIT,data);
+    if(r&&r.ok){done(r.no||"");return}
+    throw new Error("bad")}
+  catch(e){sending=false;go.disabled=false;go.textContent="다시 접수하기";
+    $("#err").innerHTML=`접수를 보내지 못했어요. 인터넷 연결을 확인하고 다시 눌러 주세요. 계속 안 되면 ${esc(CONTENT.phone)} 또는 카카오톡 채널로 알려 주세요.`;}
+}
+function done(no){
+  sending=false;
+  const ph=digits(F.phone).slice(-4);
+  app.innerHTML=`<div class="wrap narrow"><div class="card done">
+    <h2>접수되었어요</h2><p class="sub" style="margin:6px 0 0">${no?"접수번호를 꼭 저장해 주세요. 진행 조회와 문의에 쓰여요.":"접수번호는 곧 알림톡으로 보내 드려요."}</p>
+    ${no?`<div class="ticket">${esc(no)}</div><div class="hint">진행 조회: 접수번호 + 연락처 뒤 4자리${F.who==="dealer"?"(대리점 또는 소비자 번호)":" "+esc(ph)}</div>`:""}
+    <ol class="timeline">${TRACK_STEPS.map((s,i)=>`<li class="${i===0?"on now":""}"><b>${s.t}</b><small>${i===0?"방금 · 접수 확인 알림톡이 발송돼요":s.d}</small></li>`).join("")}</ol>
+    <div class="nav-btns" style="justify-content:center">${no?`<a class="btn ghost" href="#track-${esc(no)}">진행 조회</a>`:""}<a class="btn" href="#home" id="newf">처음으로</a></div>
+  </div></div>`;
+  $("#newf").onclick=()=>resetForm();resetForm();scrollTo(0,0);
+}
+
+/* ---------- 조회 ---------- */
+const TRACK_STEPS=[
+ {t:"접수 완료",d:"",s:["신규접수"]},
+ {t:"담당자 1차 안내",d:"보통 1영업일 안에 진단·입고 방법을 알려 드려요",s:["1차 안내 완료","입고 대기","추가자료 접수 요청"]},
+ {t:"본사 입고 · 진단·수리",d:"입고가 필요한 경우에만",s:["본사 입고","진단·수리중"]},
+ {t:"제조사 확인 · 부품 대기",d:"워런티는 보통 1~2주, 길면 4주",s:["제조사 접수","부품·대체품 입고 대기"]},
+ {t:"발송 완료",d:"송장번호를 알림톡으로 보내 드려요",s:["출고·발송 완료","선조치 후 크레딧 대기","크레딧·대체품 입수","완료"]}
+];
+const fmtD=s=>{if(!s)return"";const d=new Date(s.length<=10?s+"T00:00:00":s);return isNaN(d)?s:`${d.getMonth()+1}월 ${d.getDate()}일`};
+function track(pre){
+  app.innerHTML=`<div class="wrap narrow">
+    <div class="crumb"><a href="#home">지원 홈</a> › 진행 조회</div>
+    <form class="card" id="tf" novalidate><h2>진행 조회</h2><p class="sub">접수할 때 받은 접수번호와 연락처 뒤 4자리를 넣어 주세요. 대리점 접수는 대리점 번호나 소비자 번호 모두 돼요.</p>
+      <div class="field"><label for="t-no">접수번호</label><input id="t-no" class="mono" type="text" placeholder="예: 261125-07" value="${esc(pre||"")}"></div>
+      <div class="field"><label for="t-ph">연락처 뒤 4자리</label><input id="t-ph" class="mono" type="text" inputmode="numeric" maxlength="4"></div>
+      <button class="btn" type="submit" id="tgo">조회</button><div class="err" id="terr" role="alert"></div><div id="tres"></div></form></div>`;
+  $("#tf").onsubmit=async e=>{e.preventDefault();const no=$("#t-no").value.trim(),ph=digits($("#t-ph").value);
+    if(!/^\d{6}-\d{2,3}$/.test(no)){$("#terr").textContent="접수번호를 확인해 주세요. (예: 261125-07)";return}
+    if(ph.length!==4){$("#terr").textContent="연락처 뒤 4자리를 넣어 주세요.";return}
+    $("#terr").textContent="";$("#tgo").disabled=true;$("#tres").innerHTML=`<p class="hint" style="margin-top:18px">조회하는 중…</p>`;
+    let r;try{r=await post(CONFIG.HOOK_LOOKUP,{a:"track",no,ph})}catch(x){r=null}
+    $("#tgo").disabled=false;
+    if(!r||!r.ok){$("#tres").innerHTML=`<p class="err" style="margin-top:18px">지금 조회할 수 없어요. 잠시 뒤 다시 해 주세요.</p>`;return}
+    if(!r.found){$("#tres").innerHTML=`<p class="hint" style="margin-top:18px">맞는 접수 건을 찾지 못했어요. 접수번호와 연락처 뒤 4자리를 다시 확인해 주세요.</p>`;return}
+    const c={};(r.cols||[]).forEach(x=>c[x.id]=x.text||"");
+    const st=c.color_mm8m713b||"신규접수";
+    if(st==="보류·취소"){$("#tres").innerHTML=`<div class="note warn" style="margin-top:18px">이 접수 건은 보류되었거나 취소되었어요. 자세한 내용은 ${esc(CONTENT.phone)}로 문의해 주세요.</div>`;return}
+    let cur=TRACK_STEPS.findIndex(s=>s.s.includes(st));if(cur<0)cur=0;
+    const when=[fmtD(r.created),"",fmtD(c.date_mm8mrba2),"",fmtD(c.date_mm8mjwrp||c.date_mm8m43bf)];
+    $("#tres").innerHTML=`<div style="margin-top:22px;border-top:1px solid var(--line);padding-top:18px">
+      <div class="hint">${esc([c.single_selectp2osudo,c.short_textclnyzks0,c.single_selectqvr8lbz].filter(Boolean).join(" · "))}</div>
+      <ol class="timeline" style="margin-left:0">${TRACK_STEPS.map((s,i)=>`<li class="${i<=cur?"on":""}${i===cur?" now":""}"><b>${s.t}</b><small>${i<=cur?(when[i]||(i===cur?"진행 중":"")):s.d}${i===4&&i<=cur&&c.text_mm8vhq76?` · 송장번호 <span class="mono">${esc(c.text_mm8vhq76)}</span>`:""}</small></li>`).join("")}</ol></div>`};
+  if(pre)$("#t-ph").focus();
+}
+
+/* ---------- 라우팅 ---------- */
+function route(){
+  const h=(location.hash||"#home").slice(1);
+  let nav="home";
+  if(h.startsWith("brand-")){if(!route.last||route.last!==h){brandTab="issues";brandCat=null}brand(h.slice(6))}
+  else if(h==="apply"||h.startsWith("apply-")){nav="apply";if(route.last&&!route.last.startsWith("apply"))resetForm();apply(h.startsWith("apply-")?h.slice(6):undefined)}
+  else if(h==="track"||h.startsWith("track-")){nav="track";track(h.startsWith("track-")?decodeURIComponent(h.slice(6)):"")}
+  else home();
+  document.querySelectorAll("[data-nav]").forEach(a=>{if(a.dataset.nav===nav)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current")});
+  if(route.last!==h)scrollTo(0,0);
+  route.last=h;
+}
+addEventListener("hashchange",route);
+loadData().then(route);
+</script>

@@ -1,0 +1,93 @@
+# 산바다스포츠 지원 사이트 (support.sanbadasports.co.kr)
+
+애플 지원 사이트처럼 **브랜드별 자주 발생하는 문제·FAQ·매뉴얼 안내 → A/S 접수 → 진행 조회**를 한곳에서 하는 정적 웹사이트입니다.
+접수 내용은 먼데이 A/S 보드로 들어가므로, 기존 자동화(접수번호·대리점 자동 연결·시리얼 매칭·알림톡·제조사 엑셀)가 그대로 돕니다.
+
+사람이든 AI든 이 문서만 읽으면 고칠 수 있게 정리했습니다.
+
+## 1. 무엇을 어디서 고치나요
+
+| 고치고 싶은 것 | 고치는 곳 | 코드 수정 |
+|---|---|---|
+| 공지 띠, 전화·주소·운영 시간, 첫 화면 문구, 개인정보 동의 문구 | 먼데이 보드 「지원사이트 콘텐츠」 → ① 사이트 설정·공지 | 필요 없음 |
+| 브랜드 이름·설명·순서, 숨기기 | 같은 보드 → ② 브랜드 | 필요 없음 |
+| 자주 묻는 질문 / 자주 발생하는 문제 | 같은 보드 → ③ (브랜드·증상 분류 코드로 어느 페이지에 보일지 정함) | 필요 없음 |
+| 매뉴얼·영상 링크 | 같은 보드 → ④ (링크 칸에 PDF·유튜브 주소) | 필요 없음 |
+| 대리점 목록 | 먼데이 「대리점리스트」 보드 (이름·주소만 사이트에 나감, 전화번호는 안 나감) | 필요 없음 |
+| 화면 구성·디자인·접수 단계 | `index.html` | 필요함 |
+
+먼데이 보드 → 사이트 반영은 Make 시나리오가 `data/content.json`, `data/dealers.json` 을 만들어 이 저장소에 올리는 방식입니다(게시 연결 후 동작).
+먼데이 로그인이 곧 관리자 잠금입니다. 사이트에 숨은 관리자 주소는 없습니다.
+
+`공개` 체크를 끄면 그 줄은 사이트에서 숨겨집니다.
+
+## 2. 파일 구조
+
+```
+index.html          화면 전체 (HTML + CSS + JS 한 파일, 빌드 과정 없음)
+data/dealers.json   대리점 목록 [{id, n(이름), r(시·도), a(시·군·구)}]  ← Make가 덮어씀
+data/content.json   화면 문구·브랜드·FAQ·자료 (아래 형식)          ← Make가 덮어씀
+img/serial-*.jpg    브랜드별 시리얼 위치 사진
+CNAME               GitHub Pages 도메인 (팀장 확인 후 추가: support.sanbadasports.co.kr)
+```
+
+`data/*.json` 이 없거나 파일로 직접 열었을 때(file://)는 `index.html` 안의 기본값을 씁니다. 그래서 index.html 하나만 더블클릭해도 동작합니다.
+
+### content.json 형식
+```json
+{
+  "settings": {"notice":"", "phone":"02-555-5199", "hours":"평일 09:00~18:00", "address":"...",
+               "heroTitle":"...", "heroText":"...", "dealerFinder":"https://...", "consent":"HTML 허용(<b>, <br>)"},
+  "brands": [{"id":"cannondale","name":"Cannondale","kind":"로드 · MTB · 전기자전거","order":1,
+              "docs":[{"t":"사용 설명서 (PDF)","u":"https://..."}]}],
+  "faq":    [{"q":"질문","a":"답(줄바꿈 \n)","t":"꼬리표","b":["cannondale"],"c":["elec"]}]
+}
+```
+- 브랜드 코드: cannondale, birdy, strida, carryme, besv, enve, chapter2, linku, reach, garmin
+- 증상 분류 코드: frame 프레임·도장, drive 변속·브레이크, wheel 휠·타이어, noise 소음·유격, elec 충전·모터·에러(전기자전거만), fold 접이 구조(폴딩만), parts 부품 구매, etc 기타
+- `b` 가 비어 있으면 모든 브랜드 공통 FAQ(첫 화면에도 보임)
+- 브랜드를 새로 넣으면 접수 단계·Make 접수 시나리오(브랜드 라벨 switch)에도 같은 코드를 추가해야 합니다.
+
+## 3. 접수·조회가 먼데이로 가는 길 (웹훅 계약)
+
+모든 요청은 `POST`, `application/x-www-form-urlencoded` 입니다(브라우저 사전 요청 없이 바로 전송). 응답은 JSON, `Access-Control-Allow-Origin: *`.
+
+### 접수: `CONFIG.HOOK_SUBMIT` → Make 시나리오 7183259 「홈페이지 A/S 접수 → A/S 보드 등록·사진·AI 판독」
+| 필드 | 값 |
+|---|---|
+| k | `sbs-as-2026` (Make 필터와 같아야 함) |
+| hp | 빈칸 (스팸 방지용 숨은 칸. 값이 있으면 버림) |
+| who | consumer / dealer / hq |
+| kind | as / warranty |
+| brand | 브랜드 코드 또는 tacx |
+| model, serial, buy(YYYY-MM-DD), cat(분류 이름), symptom | 제품·증상 |
+| name | 소비자 성함 (who=consumer) |
+| dealer, dealer_name, staff | 대리점 아이템 ID(숫자), 이름, 매장 담당자 (who=dealer) |
+| cname | 소비자 성함 (who=dealer/hq) |
+| phone | 숫자만, 0으로 시작 |
+| email, product_name, nphotos | 선택 |
+| agree | 1 |
+| ph_whole, ph_serial, ph_issue, ph_issue2, ph_issue3, ph_receipt | JPEG base64 (data: 앞부분 없이). 브라우저에서 긴 변 1600px로 줄여 보냄 |
+
+응답: `{"ok":true,"no":"261125-07"}` (약 15초 뒤. 번호가 비면 알림톡으로 안내)
+
+Make가 하는 일: A/S 보드(18437777836) 「① 신규접수」에 항목 생성 → 텍스트 칸 입력(사용자 글은 GraphQL 변수로만 넣음) → 12초 기다려 기존 시나리오 6959045가 매긴 접수번호를 읽어 응답 → 사진을 `<접수번호>_②시리얼.jpg` 식 이름으로 각 파일 칸에 업로드 → 시리얼을 비우고 시리얼 사진만 올렸으면 AI(OCR+판독)로 번호를 읽어 「시리얼넘버」에 넣고 「시리얼 확인 = AI 판독 (확인 필요)」.
+
+### 조회: `CONFIG.HOOK_LOOKUP` → Make 시나리오 7183230 「홈페이지 조회 → 시리얼 자동완성·진행 조회」
+- 시리얼 자동완성: `a=serial&q=<3자 이상>` → 제품리스트 보드 6개(Brompton 제외)에서 포함 검색, 보드마다 최대 4개.
+  응답 `{"ok":true,"boards":[{"items_page":{"items":[{"id":"..","c":[{"id":"serial","text":".."},{"id":"product_name","text":".."}]}]}}]}`
+- 진행 조회: `a=track&no=<접수번호>&ph=<연락처 뒤 4자리>` → 접수 연락처·대리점 휴대폰·대리점 대표번호 중 하나라도 뒤 4자리가 맞을 때만
+  `{"ok":true,"found":true,"created":"..","cols":[{id,text}]}` (공개 칸만: 진행 상태, 브랜드, 모델, 구분, 송장번호, 입고일, 출고일, 대체품 발송일). 아니면 `{"ok":true,"found":false}`.
+  내부 메모·처리 메모 칸은 절대 응답에 넣지 않습니다.
+
+## 4. 설정값 (index.html 맨 위 `CONFIG`)
+웹훅 주소 2개, 접수 키, 사진 크기(1600px)·품질, 자동완성 대기 시간, 제한 시간.
+
+## 5. 배포 (GitHub Pages)
+1. 이 폴더를 GitHub 저장소에 올림 → Settings → Pages → Branch `main` / root.
+2. Custom domain = `support.sanbadasports.co.kr`, Enforce HTTPS 체크.
+3. 도메인 관리 업체(홈페이지 업체)에 CNAME 레코드 요청: `support` → `<GitHub 계정>.github.io`
+
+## 6. 나중에: 내 제품 등록 · 관련 부품
+시리얼 → 제품리스트 매칭이 이미 되므로, 「내 제품 등록」(시리얼+연락처) 화면을 붙이면 제품 ID/제품코드로 부품 목록과 고도몰 상품 링크를 보여 줄 수 있습니다.
+준비물: 제품코드 ↔ 부품 ↔ 고도몰 상품번호 표(먼데이 보드 또는 고도몰 API/엑셀 내보내기). 재고 수량은 WMS에서만 관리하므로 사이트에는 「구매 링크」만 둡니다.
