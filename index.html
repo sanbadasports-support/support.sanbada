@@ -177,12 +177,12 @@ footer{border-top:1px solid var(--line);padding-block:24px;font-size:13px;color:
 <script>
 /* ===== 설정: 고칠 일이 거의 없는 값 (README 「설정값」 참고) ===== */
 const CONFIG={
-  HOOK_SUBMIT:"https://hook.us2.make.com/vrwv593bodojltmn5by24lelz7m2gj6n", // 접수 → Make 7183259
-  HOOK_LOOKUP:"https://hook.us2.make.com/vv75leheu4z5k66ce4rnlmcu5ee9v4mt", // 시리얼 자동완성·진행 조회 → Make 7183230
-  KEY:"sbs-as-2026",            // Make 접수 시나리오 필터와 같은 값이어야 함
+  HOOK_SUBMIT:"",                // (예전 직통 주소, 문지기 사용으로 비움)
+  HOOK_LOOKUP:"",                // (예전 직통 주소, 문지기 사용으로 비움)
+  KEY:"",                       // 접수 키는 문지기(Worker)가 붙임
   // 문지기(gate-worker) 주소와 Turnstile 사이트 키. 둘 다 채우면 위 Make 주소 대신 문지기를 거쳐 보냄(README 「보안」 참고)
-  GATE:"",                      // 예: https://sanbada-gate.<계정>.workers.dev
-  TURNSTILE_SITEKEY:"",         // Cloudflare Turnstile 사이트 키(공개 값)
+  GATE:"https://sanbada-gate.sanbadasports.workers.dev", // 접수·조회 문지기
+  TURNSTILE_SITEKEY:"0x4AAAAAAGTx7yPKn1wN3wx-", // Cloudflare Turnstile 사이트 키(공개 값)
   PHOTO_MAX:1600, PHOTO_QUALITY:0.82,
   LOOKUP_DEBOUNCE_MS:600, TIMEOUT_MS:60000
 };
