@@ -10,7 +10,7 @@
 <style>
 /* Layout: 애플 지원 사이트처럼 넓은 여백의 한 단 구성. 홈(검색+브랜드) → 브랜드(문제·시리얼·자료) → 4단계 접수 → 조회 */
 :root{
-  --bg:#f5f6f7; --surface:#ffffff; --ink:#15191d; --muted:#5b646d; --line:#e1e4e8;
+  --bg:#ffffff; --surface:#ffffff; --soft:#f5f5f7; --ink:#1d1d1f; --muted:#6e6e73; --line:#e5e5ea;
   --accent:#0b6b66; --accent-soft:#e3f1ef; --accent-ink:#ffffff;
   --warn:#a8501a; --warn-soft:#fbeee4; --ok:#2f7a3b;
   --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Apple SD Gothic Neo","Pretendard Variable",Pretendard,"Malgun Gothic",system-ui,sans-serif;
@@ -18,13 +18,13 @@
   --r:14px;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#0f1214; --surface:#171b1e; --ink:#eceff1; --muted:#9aa3ab; --line:#2a3035;
+  --bg:#0f1214; --surface:#0f1214; --soft:#1b1f22; --ink:#eceff1; --muted:#9aa3ab; --line:#2a3035;
   --accent:#43b5ab; --accent-soft:#16302d; --accent-ink:#06201d; --warn:#f0a070; --warn-soft:#3a2416; --ok:#7cc488; color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#0f1214; --surface:#171b1e; --ink:#eceff1; --muted:#9aa3ab; --line:#2a3035;
+  --bg:#0f1214; --surface:#0f1214; --soft:#1b1f22; --ink:#eceff1; --muted:#9aa3ab; --line:#2a3035;
   --accent:#43b5ab; --accent-soft:#16302d; --accent-ink:#06201d; --warn:#f0a070; --warn-soft:#3a2416; --ok:#7cc488; color-scheme:dark}
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased}
+body{word-break:keep-all;overflow-wrap:anywhere;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
 a{color:var(--accent)}
 h1,h2,h3{text-wrap:balance;line-height:1.3;margin:0}
@@ -36,26 +36,26 @@ header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background
 .logo span{color:var(--muted);font-weight:500;margin-left:6px}
 nav.main{display:flex;gap:4px;margin-left:auto;overflow-x:auto}
 nav.main a{color:var(--muted);text-decoration:none;font-size:14px;padding:6px 10px;border-radius:8px;white-space:nowrap}
-nav.main a[aria-current="page"]{color:var(--ink);background:var(--bg)}
+nav.main a[aria-current="page"]{color:var(--ink);background:var(--soft)}
 .demo{background:var(--accent-soft);color:var(--ink);font-size:14px;text-align:center;padding:8px 16px}
 main{padding-block:0 80px}
 .hero{text-align:center;padding-block:56px 32px}
 .hero h1{font-size:clamp(28px,5vw,44px);font-weight:700;letter-spacing:-.02em}
 .hero p{color:var(--muted);margin:8px 0 0}
 .search{position:relative;max-width:620px;margin:28px auto 0}
-.search input{width:100%;font:inherit;font-size:17px;padding:14px 18px 14px 46px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
-.search svg{position:absolute;left:17px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.hero .search input{width:100%;font:inherit;font-size:17px;padding:14px 18px 14px 46px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.hero .search svg{position:absolute;left:17px;top:50%;transform:translateY(-50%);color:var(--muted)}
 .search input:focus,input:focus,textarea:focus,select:focus,button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .results{max-width:620px;margin:10px auto 0;text-align:left}
 .sec{padding-block:36px 0}
 .sec>h2{font-size:22px;font-weight:600;margin-bottom:18px}
-.brands{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
-.brand{display:flex;flex-direction:column;justify-content:space-between;gap:20px;min-height:116px;padding:18px;border-radius:var(--r);background:var(--surface);border:1px solid var(--line);color:var(--ink);text-decoration:none;transition:border-color .15s,transform .15s}
-.brand:hover{border-color:var(--accent);transform:translateY(-2px)}
-.brand b{font-size:19px;font-weight:700;letter-spacing:-.01em}
+.brands{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:4px 12px}
+.brand{display:flex;flex-direction:column;align-items:center;gap:4px;padding:22px 8px;text-align:center;color:var(--ink);text-decoration:none;transition:color .15s}
+.brand:hover,.brand:focus-visible{color:var(--accent)}
+.brand b{font-size:21px;font-weight:600;letter-spacing:-.015em}
 .brand small{color:var(--muted);font-size:13px}
 .ways{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
-.way{padding:20px;border-radius:var(--r);background:var(--surface);border:1px solid var(--line)}
+.way{padding:22px;border-radius:18px;background:var(--soft)}
 .way h3{font-size:17px;font-weight:600;margin-bottom:6px}
 .way p{margin:0 0 12px;color:var(--muted);font-size:14px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;font:inherit;font-size:15px;font-weight:600;padding:11px 20px;border-radius:999px;border:1px solid transparent;background:var(--accent);color:var(--accent-ink);cursor:pointer;text-decoration:none}
@@ -88,9 +88,9 @@ main{padding-block:0 80px}
 .note{padding:14px 16px;border-radius:12px;background:var(--accent-soft);font-size:14px}
 .note.warn{background:var(--warn-soft);color:var(--ink)}
 .docs{display:grid;gap:10px;max-width:640px}
-.doc{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 16px;border-radius:12px;background:var(--surface);border:1px solid var(--line)}
+.doc{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 16px;border-radius:12px;background:var(--soft)}
 .doc span{color:var(--muted);font-size:13px;white-space:nowrap}
-.cta{margin-top:32px;padding:24px;border-radius:var(--r);background:var(--surface);border:1px solid var(--line);display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between}
+.cta{margin-top:32px;padding:26px;border-radius:18px;background:var(--soft);display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between}
 .cta h3{font-size:18px;font-weight:600}
 .cta p{margin:2px 0 0;color:var(--muted);font-size:14px}
 /* 접수 마법사 */
@@ -109,7 +109,7 @@ input[type=text],input[type=tel],input[type=email],input[type=date],textarea,sel
 textarea{min-height:110px;resize:vertical}
 .mono{font-family:var(--mono);letter-spacing:.02em}
 .choice{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
-.opt{display:block;padding:14px 16px;border-radius:12px;border:1px solid var(--line);background:var(--bg);cursor:pointer;text-align:left;font:inherit;color:var(--ink)}
+.opt{display:block;padding:14px 16px;border-radius:12px;border:1px solid var(--line);background:var(--surface);cursor:pointer;text-align:left;font:inherit;color:var(--ink)}
 .opt b{display:block;font-size:15px}
 .opt small{color:var(--muted);font-size:13px}
 .opt[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);box-shadow:inset 0 0 0 1px var(--accent)}
@@ -125,7 +125,7 @@ textarea{min-height:110px;resize:vertical}
 .tips ul{margin:0;padding-left:18px;font-size:14px}
 .nav-btns{display:flex;justify-content:space-between;gap:10px;margin-top:8px;flex-wrap:wrap}
 .err{color:var(--warn);font-size:14px;min-height:1.4em;margin-top:4px}
-.consent{font-size:13px;color:var(--muted);background:var(--bg);border-radius:10px;padding:12px 14px;max-height:0;overflow:hidden;transition:max-height .2s}
+.consent{font-size:13px;color:var(--muted);background:var(--soft);border-radius:10px;padding:12px 14px;max-height:0;overflow:hidden;transition:max-height .2s}
 .consent.open{max-height:300px;overflow:auto;margin-bottom:10px}
 .check{display:flex;gap:10px;align-items:flex-start;font-size:15px}
 .check input{width:20px;height:20px;margin-top:3px;accent-color:var(--accent)}
@@ -142,7 +142,7 @@ textarea{min-height:110px;resize:vertical}
 .timeline li.now b{color:var(--accent)}
 .timeline small{display:block;color:var(--muted);font-size:13px}
 .flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;font-size:14px}
-.flow div{padding:14px;border-radius:12px;background:var(--surface);border:1px solid var(--line)}
+.flow div{padding:14px;border-radius:12px;background:var(--soft)}
 .flow b{display:block;margin-bottom:4px}
 .dealer-list{border:1px solid var(--line);border-radius:10px;margin-top:6px;overflow:hidden}
 .dealer-list button{display:block;width:100%;text-align:left;font:inherit;padding:10px 13px;background:var(--surface);border:0;border-bottom:1px solid var(--line);color:var(--ink);cursor:pointer}
