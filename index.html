@@ -340,7 +340,7 @@ function apply(bid){
       <div class="field"><label for="f-serial">프레임(시리얼) 번호${F.serialByPhoto?"":'<span class="req">*</span>'}</label>
         <div class="ac"><input id="f-serial" class="mono" type="text" value="${esc(F.serial)}" placeholder="예: TE14640" autocomplete="off" ${F.serialByPhoto?"disabled":""}><div id="sl" class="dealer-list" hidden></div></div>
         <span class="hint" id="s-hint">${F.product?`선택한 제품: <b>${esc(F.product)}</b>`:"3자 이상 넣으면 등록된 제품 번호를 찾아 드려요."}</span>
-        <label class="check" style="margin-top:6px"><input id="f-byphoto" type="checkbox" ${F.serialByPhoto?"checked":""}><span>번호를 못 찾겠어요. 다음 단계에서 시리얼 사진을 올릴게요 <span class="hint">(사진에서 번호를 자동으로 읽어요)</span></span></label>
+        <label class="check" style="margin-top:6px"><input id="f-byphoto" type="checkbox" ${F.serialByPhoto?"checked":""}><span>번호를 못 찾겠어요. 다음 단계에서 시리얼 사진을 올릴게요</span></label>
         ${b&&b.img?`<details><summary class="hint" style="cursor:pointer">시리얼 번호는 어디에 있나요?</summary><div class="serialimg" style="margin-top:8px"><img src="img/serial-${b.id}.jpg" alt="${esc(b.name)} 시리얼 위치"></div></details>`:""}</div>
       <div class="field"><label for="f-model">모델명${F.product||F.serialByPhoto?"":'<span class="req">*</span>'}</label><input id="f-model" type="text" value="${esc(F.model)}" placeholder="예: Synapse Carbon 3, P40, SES 4.5"><span class="hint">시리얼 번호를 목록에서 골랐거나 시리얼 사진을 올리면 비워도 돼요.</span></div>
       <div class="field"><label for="f-buy">구매일${F.kind==="warranty"?'<span class="req">*</span>':""}</label><input id="f-buy" type="date" value="${esc(F.buy)}" max="${new Date().toISOString().slice(0,10)}"></div>
