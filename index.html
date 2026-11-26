@@ -216,7 +216,7 @@ const FAQ=[
  {q:"재도장해도 워런티가 유지되나요?",t:"워런티",b:[],c:["frame"],a:"재도장하면 워런티 권한이 없어질 수 있습니다. 재도장 전에 먼저 문의해 주세요."},
  {q:"증상만 듣고 워런티인지 알 수 있나요?",t:"워런티",b:[],c:["frame","etc"],a:"전화나 글만으로는 판단하기 어렵습니다. 사진과 영수증을 함께 접수해 주시면 본사가 확인한 뒤 워런티 여부를 안내해 드립니다."},
  {q:"배터리를 사설 업체에서 수리해도 되나요?",t:"A/S·수리",b:["cannondale","besv"],c:["elec"],a:"권장하지 않습니다. 사설 수리 후 생기는 문제는 보증에서 모두 제외되며, 안전 위험이 있을 수 있습니다."},
- {q:"소비자가 직접 접수할 수 있나요?",t:"접수 방법",b:[],c:["etc"],a:"이 페이지에서 소비자도 직접 접수할 수 있습니다. 다만 진단이 필요한 증상은 구매하신 대리점(또는 가까운 취급 대리점)에서 먼저 보고 본사로 보내는 것이 가장 빠릅니다."},
+ {q:"소비자가 직접 접수할 수 있나요?",t:"접수 방법",b:[],c:["etc"],a:"소비자 직접 접수는 Tacx 트레이너만 가능합니다. 그 밖의 브랜드는 구매하신 대리점(또는 가까운 취급 대리점)에서 접수해 주세요. 대리점에서 먼저 보고 본사로 보내는 것이 가장 빠릅니다."},
  {q:"구매한 대리점이 문을 닫았거나 취급을 안 한다고 해요",t:"접수 방법",b:[],c:["etc"],a:"다른 취급 대리점에서도 접수할 수 있습니다. 대리점 찾기에서 가까운 곳을 찾아 방문하시고, 구매 영수증을 꼭 챙겨 주세요."},
  {q:"부품만 따로 사고 싶어요",t:"제품·부품",b:[],c:["parts"],a:"부품은 대리점을 통해 주문합니다. 정확한 부품 확인을 위해 제품 모델명과 부품 사진을 카카오톡 채널로 보내 주세요.\n스프라켓·타이어 같은 범용 부품은 가까운 자전거 매장에서도 살 수 있습니다."},
  {q:"정품등록이 안 되거나 시리얼 번호를 못 찾겠어요",t:"정품등록",b:[],c:["etc"],a:"대리점명이 검색되지 않으면 대리점 조회 없이 정보만 넣어 등록하세요. 구매일은 나중에 고칠 수 있습니다.\n브랜드별 시리얼 위치는 각 브랜드 페이지의 「시리얼 위치」에서 사진으로 확인할 수 있습니다.\nENVE 휠은 박스·QR 종이가 없으면 림테이프 아래에, Birdy는 도장 때문에 안 보이면 BB 아래 사진과 박스 시리얼 사진으로 등록합니다."},
@@ -319,18 +319,20 @@ const PHOTO_SLOTS=[["whole","제품 전체"],["serial","시리얼 번호"],["iss
 function needPhotos(){const n=[];if(F.kind==="warranty")n.push("whole","serial","issue","receipt");else if(F.serialByPhoto)n.push("serial");return n}
 function apply(bid){
   if(bid!==undefined&&bid!==F.brand&&step===0)F.brand=bid;
+  if(F.who==="consumer"&&F.brand&&F.brand!=="tacx")F.brand="tacx";
   const b=brandOf(F.brand);
   const opt=(key,val,title,sub)=>`<button type="button" class="opt" data-k="${key}" data-v="${val}" aria-pressed="${F[key]===val}"><b>${title}</b>${sub?`<small>${sub}</small>`:""}</button>`;
   let html="";
   if(step===0){
     html=`<h2>누가 접수하나요?</h2><p class="sub">접수하시는 분에 따라 필요한 정보가 달라져요.</p>
       <div class="field"><span class="lbl">접수처<span class="req">*</span></span><div class="choice">
-        ${opt("who","consumer","소비자","제품을 쓰시는 분")}${opt("who","dealer","대리점","판매 대리점·매장")}${opt("who","hq","본사 직영","직영점 접수")}</div></div>
+        ${opt("who","consumer","소비자","Tacx 트레이너만 직접 접수")}${opt("who","dealer","대리점","판매 대리점·매장")}${opt("who","hq","본사 직영","직영점 접수")}</div></div>
       <div class="field"><span class="lbl">접수 구분<span class="req">*</span></span><div class="choice">
         ${opt("kind","as","일반 A/S","수리·점검·유상 정비")}${opt("kind","warranty","워런티","제품 결함 보증 신청")}</div>
         <span class="hint">헷갈리면 일반 A/S로 접수하세요. 본사에서 확인 후 워런티로 바꿔 드려요.</span></div>
       <div class="field"><span class="lbl">브랜드<span class="req">*</span></span><div class="choice">
-        ${BRANDS.filter(x=>x.id!=="garmin").map(x=>opt("brand",x.id,x.name,x.kind)).join("")}${opt("brand","tacx","Tacx","스마트 트레이너")}</div></div>`;
+        ${F.who==="consumer"?opt("brand","tacx","Tacx","스마트 트레이너"):BRANDS.filter(x=>x.id!=="garmin").map(x=>opt("brand",x.id,x.name,x.kind)).join("")+opt("brand","tacx","Tacx","스마트 트레이너")}</div>
+        ${F.who==="consumer"?`<div class="note" style="margin-top:12px">소비자 직접 접수는 Tacx 트레이너만 가능해요. 다른 브랜드는 구매하신 대리점(또는 가까운 취급 대리점)에서 접수해 주세요. <a href="${esc(CONTENT.dealerFinder)}" target="_blank" rel="noopener">대리점 찾기</a></div>`:""}</div>`;
   }else if(step===1){
     const cats=catsFor(b);
     const tips=F.cat?faqFor(F.brand,F.cat).slice(0,3):[];
@@ -397,7 +399,7 @@ function save(){
 const digits=s=>String(s||"").replace(/\D/g,"");
 function check(){
   const w=F.kind==="warranty";
-  if(step===0){if(!F.who)return"접수처를 골라 주세요.";if(!F.kind)return"접수 구분을 골라 주세요.";if(!F.brand)return"브랜드를 골라 주세요."}
+  if(step===0){if(!F.who)return"접수처를 골라 주세요.";if(!F.kind)return"접수 구분을 골라 주세요.";if(!F.brand)return"브랜드를 골라 주세요.";if(F.who==="consumer"&&F.brand!=="tacx")return"소비자 직접 접수는 Tacx만 가능해요. 다른 브랜드는 대리점에서 접수해 주세요."}
   if(step===1){
     if(!F.serial&&!F.serialByPhoto)return"시리얼 번호를 적어 주세요. 못 찾겠으면 「번호를 못 찾겠어요」를 눌러 사진으로 올려 주세요.";
     if(F.serial&&!/^[A-Za-z0-9\-\/ ]{3,40}$/.test(F.serial))return"시리얼 번호는 영문과 숫자로만 적어 주세요.";
