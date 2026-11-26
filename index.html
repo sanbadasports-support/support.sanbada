@@ -299,8 +299,7 @@ function brand(id){
   }
   app.innerHTML=`<div class="wrap">
     <div class="crumb"><a href="#home">지원 홈</a> › ${esc(b.name)}</div>
-    <div class="bhead"><div><h1>${esc(b.name)} 지원</h1><p>${esc(b.kind)}</p></div>
-      ${b.id==="garmin"?"":`<a class="btn" href="#apply-${b.id}">${esc(b.name)} A/S 접수</a>`}</div>
+    <div class="bhead"><div><h1>${esc(b.name)} 지원</h1><p>${esc(b.kind)}</p></div></div>
     ${b.id==="garmin"?`<div class="note warn" style="margin-top:12px">가민 기기(엣지·랠리 등)는 가민코리아에서 직접 접수해요. Tacx 트레이너만 산바다스포츠에서 접수합니다.</div>`:""}
     <div class="tabs" role="tablist">${tabs.map(([k,n])=>`<button role="tab" data-tab="${k}" aria-selected="${brandTab===k}">${n}</button>`).join("")}</div>
     <div class="panel">${body}</div>
