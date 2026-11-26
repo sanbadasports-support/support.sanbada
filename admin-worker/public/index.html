@@ -100,10 +100,10 @@ function render(){
   let h="";
   if(tab==="basic"){
     h=`<div class="card"><h2>기본 설정</h2><p class="sub">사이트 전체에 쓰이는 연락처·첫 화면 문구예요.</p>
-      ${BASIC.map(([k,n,em])=>field("s:"+k,n,S[k],em,k==="consent"||k==="heroText"))}</div>`;
+      ${BASIC.map(([k,n,em])=>field("s:"+k,n,S[k],em,k==="consent"||k==="heroText")).join("")}</div>`;
   }else if(tab==="texts"){
     h=`<div class="card"><h2>화면 안내 문구</h2><p class="sub">접수·조회 화면의 도움말과 안내예요. 비우면 그 문구가 안 보여요.</p>
-      ${TEXTS.map(([k,n])=>field("s:"+k,n,S[k],"",(S[k]||"").length>40))}</div>`;
+      ${TEXTS.map(([k,n])=>field("s:"+k,n,S[k],"",(S[k]||"").length>40)).join("")}</div>`;
   }else if(tab==="brands"){
     h=`<p class="sub">브랜드 이름·설명·순서와 「매뉴얼·자료」 탭의 링크를 고쳐요. 브랜드 추가·삭제는 접수 자동화와 연결돼 있어 개발 수정이 필요해요.</p>`+
       DATA.brands.map((b,i)=>`<div class="card"><div class="row" style="margin-bottom:10px"><h2 style="margin:0">${esc(b.name)}</h2><span class="muted">${esc(b.id)}</span></div>
