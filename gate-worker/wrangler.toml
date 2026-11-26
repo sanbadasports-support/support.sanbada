@@ -1,0 +1,30 @@
+# support.sanbada 접수·조회 문지기 (공개, Access 잠금 없음)
+# 배포: Cloudflare → Workers & Pages → Import repository → support.sanbada, 루트 디렉터리 gate-worker
+name = "sanbada-gate"
+main = "worker.js"
+compatibility_date = "2025-09-01"
+workers_dev = true
+
+[vars]
+ALLOWED_ORIGINS = "https://support.sanbadasports.co.kr,https://sanbadasports-support.github.io"
+
+# IP당 횟수 제한 (Workers Rate Limiting, period는 10 또는 60초만 가능)
+[[ratelimits]]
+name = "RL_SUBMIT"
+namespace_id = "2701"
+simple = { limit = 3, period = 60 }
+
+[[ratelimits]]
+name = "RL_TRACK"
+namespace_id = "2702"
+simple = { limit = 8, period = 60 }
+
+[[ratelimits]]
+name = "RL_SERIAL"
+namespace_id = "2703"
+simple = { limit = 40, period = 60 }
+
+# 비밀값(대시보드 → Worker → 설정 → 변수 및 비밀 → 「암호화」로 추가, 이 파일에 적지 말 것):
+#   HOOK_SUBMIT, HOOK_LOOKUP  : 새로 발급한 Make 웹훅 주소
+#   SUBMIT_KEY                : Make 접수 시나리오 필터 값
+#   TURNSTILE_SECRET          : Turnstile 비밀 키

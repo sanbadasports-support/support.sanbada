@@ -108,6 +108,7 @@ main{padding-block:0 80px}
 .hint{font-size:13px;color:var(--muted)}
 input[type=text],input[type=tel],input[type=email],input[type=date],textarea,select{font:inherit;font-size:16px;padding:11px 13px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);width:100%}
 textarea{min-height:110px;resize:vertical}
+.ts{margin:18px 0 4px;min-height:65px}
 .mono{font-family:var(--mono);letter-spacing:.02em}
 .choice{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
 .opt{display:block;padding:14px 16px;border-radius:12px;border:1px solid var(--line);background:var(--surface);cursor:pointer;text-align:left;font:inherit;color:var(--ink)}
@@ -179,6 +180,9 @@ const CONFIG={
   HOOK_SUBMIT:"https://hook.us2.make.com/vrwv593bodojltmn5by24lelz7m2gj6n", // 접수 → Make 7183259
   HOOK_LOOKUP:"https://hook.us2.make.com/vv75leheu4z5k66ce4rnlmcu5ee9v4mt", // 시리얼 자동완성·진행 조회 → Make 7183230
   KEY:"sbs-as-2026",            // Make 접수 시나리오 필터와 같은 값이어야 함
+  // 문지기(gate-worker) 주소와 Turnstile 사이트 키. 둘 다 채우면 위 Make 주소 대신 문지기를 거쳐 보냄(README 「보안」 참고)
+  GATE:"",                      // 예: https://sanbada-gate.<계정>.workers.dev
+  TURNSTILE_SITEKEY:"",         // Cloudflare Turnstile 사이트 키(공개 값)
   PHOTO_MAX:1600, PHOTO_QUALITY:0.82,
   LOOKUP_DEBOUNCE_MS:600, TIMEOUT_MS:60000
 };
@@ -403,11 +407,12 @@ function apply(bid){
   }else{
     const ph=Object.keys(F.photos).length;
     const row=(k,v)=>`<dt>${k}</dt><dd>${v?esc(v):"<span class='hint'>없음</span>"}</dd>`;
+    const tsBox=useGate()?`<div id="ts-apply" class="ts"></div>`:"";
     html=`<h2>접수 내용 확인</h2><p class="sub">맞는지 확인하고 접수해 주세요.</p>
       <dl class="review">${row("접수처",{consumer:"소비자",dealer:"대리점",hq:"본사 직영"}[F.who])}${row("구분",F.kind==="warranty"?"워런티":"일반 A/S")}
       ${row("브랜드",b?b.name:"Tacx")}${row("모델",F.model||F.product)}<dt>시리얼 번호</dt><dd class="mono">${F.serial?esc(F.serial):F.serialByPhoto?"<span class='hint'>사진으로 확인</span>":""}</dd>${row("구매일",F.buy)}
       ${row("문제 분류",(CATS.find(c=>c.id===F.cat)||{}).name)}${row("증상",F.symptom)}${row("사진",ph?ph+"장":"")}
-      ${F.who==="dealer"?row("대리점",F.dealerName+(F.staff?" ("+F.staff+")":"")):""}${row(F.who==="consumer"?"성함":"소비자 성함",F.who==="consumer"?F.name:F.cname)}${row("연락처",F.phone)}${row("이메일",F.email)}</dl>`;
+      ${F.who==="dealer"?row("대리점",F.dealerName+(F.staff?" ("+F.staff+")":"")):""}${row(F.who==="consumer"?"성함":"소비자 성함",F.who==="consumer"?F.name:F.cname)}${row("연락처",F.phone)}${row("이메일",F.email)}</dl>${tsBox}`;
   }
   app.innerHTML=`<div class="wrap narrow">
     <div class="crumb"><a href="#home">지원 홈</a> › A/S 접수</div>
@@ -418,6 +423,7 @@ function apply(bid){
       <div class="nav-btns">${step?`<button type="button" class="btn ghost" id="back">이전</button>`:"<span></span>"}
         <button type="submit" class="btn" id="go">${step===4?"접수하기":"다음"}</button></div></form></div>`;
   bindApply();
+  if(step===4)tsMount("ts-apply");
 }
 function save(){
   const v=id=>{const e=document.getElementById(id);return e?e.value.trim():undefined};
@@ -458,11 +464,18 @@ async function post(url,data){
   const ctl=new AbortController();const t=setTimeout(()=>ctl.abort(),CONFIG.TIMEOUT_MS);
   try{const r=await fetch(url,{method:"POST",body,signal:ctl.signal});const txt=await r.text();
     try{return JSON.parse(txt)}catch(e){return{ok:r.ok,raw:txt}}}finally{clearTimeout(t)}}
+/* 문지기 + Turnstile(사람 확인). CONFIG.GATE·TURNSTILE_SITEKEY 가 비면 예전처럼 Make로 바로 보냄 */
+const useGate=()=>!!(CONFIG.GATE&&CONFIG.TURNSTILE_SITEKEY);
+let tsP=null;const tsW={};
+function tsLoad(){return tsP||(tsP=new Promise((ok,no)=>{const s=document.createElement("script");s.src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";s.async=true;s.onload=()=>ok(window.turnstile);s.onerror=()=>{tsP=null;no(new Error("turnstile"))};document.head.appendChild(s)}))}
+async function tsMount(id){if(!useGate()||!document.getElementById(id))return;try{const t=await tsLoad();if(t&&document.getElementById(id))tsW[id]=t.render("#"+id,{sitekey:CONFIG.TURNSTILE_SITEKEY,size:"flexible",language:"ko"})}catch(e){}}
+function tsToken(id){try{return(window.turnstile&&tsW[id]!=null&&window.turnstile.getResponse(tsW[id]))||""}catch(e){return""}}
+function tsReset(id){try{if(window.turnstile&&tsW[id]!=null)window.turnstile.reset(tsW[id])}catch(e){}}
 /* 시리얼 자동완성 */
 const serialCache={};let serialTimer=null,serialSeq=0;
 async function serialLookup(q){
   const key=q.toUpperCase();if(serialCache[key])return serialCache[key];
-  const r=await post(CONFIG.HOOK_LOOKUP,{a:"serial",q});
+  const r=await post(useGate()?CONFIG.GATE+"/lookup":CONFIG.HOOK_LOOKUP,{a:"serial",q});
   const out=[];((r&&r.boards)||[]).forEach(b=>((b.items_page||{}).items||[]).forEach(it=>{const g=id=>((it.c||[]).find(c=>c.id===id)||{}).text||"";out.push({serial:g("serial").toUpperCase(),name:g("product_name")})}));
   return serialCache[key]=out.slice(0,8);
 }
@@ -502,10 +515,12 @@ async function submit(){
     cat:(CATS.find(c=>c.id===F.cat)||{}).name||"기타",symptom:F.symptom,name:F.name,dealer:F.dealer,dealer_name:F.dealerName,staff:F.staff,cname:F.cname,
     phone:digits(F.phone),email:F.email,agree:F.agree?"1":"",nphotos:Object.keys(F.photos).length,product_name:F.product,
     ph_whole:F.photos.whole||"",ph_serial:F.photos.serial||"",ph_issue:F.photos.issue||"",ph_issue2:F.photos.issue2||"",ph_issue3:F.photos.issue3||"",ph_receipt:F.photos.receipt||""};
-  try{const r=await post(CONFIG.HOOK_SUBMIT,data);
+  if(useGate()){delete data.k;data.ts=tsToken("ts-apply");
+    if(!data.ts){sending=false;go.disabled=false;go.textContent="접수하기";$("#err").textContent="아래 사람 확인 체크가 끝난 뒤 다시 눌러 주세요.";return}}
+  try{const r=await post(useGate()?CONFIG.GATE+"/submit":CONFIG.HOOK_SUBMIT,data);
     if(r&&r.ok){done(r.no||"");return}
     throw new Error("bad")}
-  catch(e){sending=false;go.disabled=false;go.textContent="다시 접수하기";
+  catch(e){sending=false;go.disabled=false;go.textContent="다시 접수하기";tsReset("ts-apply");
     $("#err").innerHTML=`접수를 보내지 못했어요. 인터넷 연결을 확인하고 다시 눌러 주세요. 계속 안 되면 ${esc(CONTENT.phone)} 또는 카카오톡 채널로 알려 주세요.`;}
 }
 function done(no){
@@ -535,13 +550,15 @@ function track(pre){
     <form class="card" id="tf" novalidate><h2>진행 조회</h2><p class="sub">${tx("trackSub")}</p>
       <div class="field"><label for="t-no">접수번호</label><input id="t-no" class="mono" type="text" placeholder="예: 261125-07" value="${esc(pre||"")}"></div>
       <div class="field"><label for="t-ph">연락처 뒤 4자리</label><input id="t-ph" class="mono" type="text" inputmode="numeric" maxlength="4"></div>
-      <button class="btn" type="submit" id="tgo">조회</button><div class="err" id="terr" role="alert"></div><div id="tres"></div></form></div>`;
+      ${useGate()?`<div id="ts-track" class="ts"></div>`:""}<button class="btn" type="submit" id="tgo">조회</button><div class="err" id="terr" role="alert"></div><div id="tres"></div></form></div>`;
+  tsMount("ts-track");
   $("#tf").onsubmit=async e=>{e.preventDefault();const no=$("#t-no").value.trim(),ph=digits($("#t-ph").value);
     if(!/^\d{6}-\d{2,3}$/.test(no)){$("#terr").textContent="접수번호를 확인해 주세요. (예: 261125-07)";return}
     if(ph.length!==4){$("#terr").textContent="연락처 뒤 4자리를 넣어 주세요.";return}
     $("#terr").textContent="";$("#tgo").disabled=true;$("#tres").innerHTML=`<p class="hint" style="margin-top:18px">조회하는 중…</p>`;
-    let r;try{r=await post(CONFIG.HOOK_LOOKUP,{a:"track",no,ph})}catch(x){r=null}
-    $("#tgo").disabled=false;
+    const tq={a:"track",no,ph};if(useGate()){tq.ts=tsToken("ts-track");if(!tq.ts){$("#tgo").disabled=false;$("#tres").innerHTML="";$("#terr").textContent="사람 확인 체크가 끝난 뒤 다시 눌러 주세요.";return}}
+    let r;try{r=await post(useGate()?CONFIG.GATE+"/lookup":CONFIG.HOOK_LOOKUP,tq)}catch(x){r=null}
+    $("#tgo").disabled=false;tsReset("ts-track");
     if(!r||!r.ok){$("#tres").innerHTML=`<p class="err" style="margin-top:18px">지금 조회할 수 없어요. 잠시 뒤 다시 해 주세요.</p>`;return}
     if(!r.found){$("#tres").innerHTML=`<p class="hint" style="margin-top:18px">맞는 접수 건을 찾지 못했어요. 접수번호와 연락처 뒤 4자리를 다시 확인해 주세요.</p>`;return}
     const c={};(r.cols||[]).forEach(x=>c[x.id]=x.text||"");

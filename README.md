@@ -98,3 +98,9 @@ Make가 하는 일: A/S 보드(18437777836) 「① 신규접수」에 항목 생
 ## 6. 나중에: 내 제품 등록 · 관련 부품
 시리얼 → 제품리스트 매칭이 이미 되므로, 「내 제품 등록」(시리얼+연락처) 화면을 붙이면 제품 ID/제품코드로 부품 목록과 고도몰 상품 링크를 보여 줄 수 있습니다.
 준비물: 제품코드 ↔ 부품 ↔ 고도몰 상품번호 표(먼데이 보드 또는 고도몰 API/엑셀 내보내기). 재고 수량은 WMS에서만 관리하므로 사이트에는 「구매 링크」만 둡니다.
+
+## 보안: 접수·조회 문지기 (gate-worker)
+- 목적: Make 웹훅 주소를 공개 코드에서 빼고, 가짜 접수 도배·Make 크레딧 소진·진행 조회 대입을 막음.
+- 구조: 홈페이지 → `gate-worker`(Cloudflare Worker, 로그인 없음) → Make. 접수와 진행 조회는 Turnstile(사람 확인) 필수, IP당 1분 횟수 제한(접수 3·조회 8·시리얼 자동완성 40), 허용 사이트(Origin)만 받음, 숨은 칸(hp)이 채워진 요청은 버림.
+- 켜는 순서: ① gate-worker 배포(루트 디렉터리 `gate-worker`) ② Turnstile 위젯 만들기(도메인 support.sanbadasports.co.kr, sanbadasports-support.github.io) ③ Worker 비밀값 HOOK_SUBMIT·HOOK_LOOKUP·SUBMIT_KEY·TURNSTILE_SECRET ④ index.html CONFIG의 GATE·TURNSTILE_SITEKEY 채우기 ⑤ 시험 후 Make 웹훅을 새로 발급해 Worker 비밀값만 바꾸고, CONFIG의 HOOK_SUBMIT·HOOK_LOOKUP·KEY는 지움.
+- GATE·TURNSTILE_SITEKEY가 비어 있으면 예전처럼 Make로 바로 보냄(지금 상태).
