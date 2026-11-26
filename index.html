@@ -51,8 +51,9 @@ main{padding-block:0 80px}
 .sec>h2{font-size:22px;font-weight:600;margin-bottom:18px}
 .brands{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:4px 12px}
 .brand{display:flex;flex-direction:column;align-items:center;gap:4px;padding:22px 8px;text-align:center;color:var(--ink);text-decoration:none;transition:color .15s}
-.brand:hover,.brand:focus-visible{color:var(--accent)}
-.brand b{font-size:21px;font-weight:600;letter-spacing:-.015em}
+.brand b{display:inline-block;font-size:21px;font-weight:500;letter-spacing:-.015em;color:#3a3a3c;transition:transform .18s ease,font-weight .18s ease,color .18s ease}
+.brand:hover b,.brand:focus-visible b,.brand:active b{font-weight:700;color:var(--ink);transform:scale(1.1)}
+@media (prefers-reduced-motion:reduce){.brand b{transition:none}}
 .brand small{color:var(--muted);font-size:13px}
 .ways{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
 .way{padding:22px;border-radius:18px;background:var(--soft)}
