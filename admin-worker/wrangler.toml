@@ -1,0 +1,21 @@
+# support.sanbada 관리자 페이지 (Cloudflare Worker)
+# 배포: Cloudflare 대시보드 → Workers & Pages → 만들기 → GitHub 저장소 연결 → 루트 디렉터리 admin-worker
+name = "sanbada-admin"
+main = "worker.js"
+compatibility_date = "2025-09-01"
+workers_dev = true
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+run_worker_first = true   # 화면 파일도 로그인 확인을 먼저 거치게 함
+
+[vars]
+REPO = "sanbadasports-support/support.sanbada"
+BRANCH = "main"
+FILE = "data/content.json"
+SITE_URL = "https://support.sanbadasports.co.kr/"
+# 아래 두 값은 Cloudflare Access 설정 후 채움 (대시보드 → Worker → 설정 → 변수)
+ACCESS_TEAM = ""   # 예: sanbada.cloudflareaccess.com
+ACCESS_AUD = ""    # Access 애플리케이션의 Application Audience (AUD) 태그
+# 비밀값(대시보드에서 「암호화」로 추가, 이 파일에 적지 말 것): GITHUB_TOKEN

@@ -7,26 +7,33 @@
 
 ## 1. 무엇을 어디서 고치나요
 
-| 고치고 싶은 것 | 고치는 곳 | 코드 수정 |
-|---|---|---|
-| 공지 띠, 전화·주소·운영 시간, 첫 화면 문구, 개인정보 동의 문구 | 먼데이 보드 「지원사이트 콘텐츠」 → ① 사이트 설정·공지 | 필요 없음 |
-| 브랜드 이름·설명·순서, 숨기기 | 같은 보드 → ② 브랜드 | 필요 없음 |
-| 자주 묻는 질문 / 자주 발생하는 문제 | 같은 보드 → ③ (브랜드·증상 분류 코드로 어느 페이지에 보일지 정함) | 필요 없음 |
-| 매뉴얼·영상 링크 | 같은 보드 → ④ (링크 칸에 PDF·유튜브 주소) | 필요 없음 |
-| 대리점 목록 | 먼데이 「대리점리스트」 보드 (이름·주소만 사이트에 나감, 전화번호는 안 나감) | 필요 없음 |
-| 화면 구성·디자인·접수 단계 | `index.html` | 필요함 |
+글자·FAQ·자료 링크는 **관리자 페이지**에서 고칩니다(코드 수정 필요 없음).
 
-먼데이 보드 → 사이트 반영은 Make 시나리오가 `data/content.json`, `data/dealers.json` 을 만들어 이 저장소에 올리는 방식입니다(게시 연결 후 동작).
-먼데이 로그인이 곧 관리자 잠금입니다. 사이트에 숨은 관리자 주소는 없습니다.
+| 고치고 싶은 것 | 관리자 페이지 탭 |
+|---|---|
+| 공지 띠, 전화·주소·운영 시간, 첫 화면 문구, 대리점 찾기 링크, 개인정보 동의 문구 | 기본 설정 |
+| 접수·조회 화면의 도움말·안내 문구 20개 | 화면 안내 문구 |
+| 브랜드 이름·설명·순서, 「매뉴얼·자료」 링크 | 브랜드·자료 |
+| 자주 묻는 질문 / 자주 발생하는 문제 (추가·삭제·순서·브랜드·증상 분류) | 자주 발생하는 문제 |
+| 누가 언제 무엇을 바꿨는지 | 변경 기록 |
+| 대리점 목록 | `data/dealers.json` (먼데이 「대리점리스트」에서 이름·지역만. 전화번호는 넣지 않음) |
+| 화면 구성·디자인·접수 단계, 브랜드 추가·삭제 | `index.html` (코드 수정) |
 
-`공개` 체크를 끄면 그 줄은 사이트에서 숨겨집니다.
+### 관리자 페이지 구조 (`admin-worker/`)
+- Cloudflare Worker `sanbada-admin` 으로 배포합니다. 고객용 사이트(GitHub Pages)와 따로 떨어져 있습니다.
+- **잠금:** Cloudflare Access(Zero Trust)가 앞에서 회사 메일 인증 코드로 로그인시킵니다. Worker도 Access 토큰(`Cf-Access-Jwt-Assertion`)을 다시 검증하고, `ACCESS_TEAM`·`ACCESS_AUD` 가 비어 있으면 모든 요청을 거절합니다.
+- **저장:** 「저장」 → Worker가 GitHub API로 `data/content.json` 을 커밋(메시지에 저장한 사람 메일) → GitHub Pages가 1~2분 안에 반영. 되돌리기는 GitHub 커밋 기록에서.
+- **비밀값:** `GITHUB_TOKEN` (이 저장소 하나에만 Contents 읽기·쓰기 권한을 준 fine-grained 토큰). Cloudflare 대시보드에 「암호화」 변수로만 넣고, 코드·문서에 적지 않습니다.
+- 파일: `admin-worker/worker.js`(API·로그인 검증), `admin-worker/public/index.html`(관리 화면), `admin-worker/wrangler.toml`(설정).
+- 사이트(`index.html`)는 `data/content.json` 이 없거나 파일로 직접 열면 index.html 안의 기본값을 씁니다. 화면 안내 문구 키를 새로 만들면 index.html의 `CONTENT` 기본값과 관리 화면의 `TEXTS` 목록에 같이 추가하세요.
 
 ## 2. 파일 구조
 
 ```
 index.html          화면 전체 (HTML + CSS + JS 한 파일, 빌드 과정 없음)
-data/dealers.json   대리점 목록 [{id, n(이름), r(시·도), a(시·군·구)}]  ← Make가 덮어씀
-data/content.json   화면 문구·브랜드·FAQ·자료 (아래 형식)          ← Make가 덮어씀
+data/dealers.json   대리점 목록 [{id, n(이름), r(시·도), a(시·군·구)}]
+admin-worker/       관리자 페이지 (Cloudflare Worker)
+data/content.json   화면 문구·브랜드·FAQ·자료 (아래 형식)          ← 관리자 페이지가 저장
 img/serial-*.jpg    브랜드별 시리얼 위치 사진
 CNAME               GitHub Pages 도메인 (팀장 확인 후 추가: support.sanbadasports.co.kr)
 ```

@@ -1,3 +1,8 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>support.sanbada · 산바다스포츠 지원</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <!-- 글꼴: 애플 기기는 SF Pro + Apple SD Gothic Neo(기기 내장), 그 밖의 기기는 Pretendard(애플 글꼴과 비슷한 무료 글꼴) -->
@@ -151,6 +156,8 @@ footer{border-top:1px solid var(--line);padding-block:24px;font-size:13px;color:
 @media (max-width:560px){.review{grid-template-columns:1fr}.review dt{margin-top:6px}.card{padding:18px}.top .wrap{gap:10px}.logo span{display:none}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
+</head>
+<body>
 
 <header class="top"><div class="wrap">
   <a class="logo" href="#home">support.sanbada<span>산바다스포츠 지원</span></a>
@@ -183,6 +190,27 @@ const CONTENT={
   heroTitle:"무엇을 도와드릴까요?",
   heroText:"제품을 고르면 자주 생기는 문제와 해결 방법을 먼저 보여 드려요. 해결이 안 되면 바로 A/S를 접수할 수 있어요.",
   dealerFinder:"https://www.sanbadasports.co.kr/service/shop_list.php",
+  /* 화면 안내 문구 — 먼데이 「지원사이트 콘텐츠」 ① 설정 그룹의 「설정 키」와 같은 이름 */
+  ctaTitle:"해결되지 않았나요?",
+  ctaText:"사진과 증상을 올려 주시면 담당자가 확인 후 알림톡으로 안내해 드려요.",
+  garminNote:"가민 기기(엣지·랠리 등)는 가민코리아에서 직접 접수해요. Tacx 트레이너만 산바다스포츠에서 접수합니다.",
+  applyWhoSub:"접수하시는 분에 따라 필요한 정보가 달라져요.",
+  kindHint:"헷갈리면 일반 A/S로 접수하세요. 본사에서 확인 후 워런티로 바꿔 드려요.",
+  consumerOnly:"소비자 직접 접수는 Tacx 트레이너만 가능해요. 다른 브랜드는 구매하신 대리점(또는 가까운 취급 대리점)에서 접수해 주세요.",
+  serialHint:"3자 이상 넣으면 등록된 제품 번호를 찾아 드려요.",
+  serialByPhoto:"번호를 못 찾겠어요. 다음 단계에서 시리얼 사진을 올릴게요",
+  modelHint:"시리얼 번호를 목록에서 골랐거나 시리얼 사진을 올리면 비워도 돼요.",
+  symptomPlaceholder:"언제부터, 어떤 상황에서, 어떻게 문제가 생기는지 적어 주세요.",
+  photoWarranty:"워런티 접수는 제품 전체, 시리얼 번호, 문제 부위 사진과 구매 영수증이 꼭 필요해요.",
+  photoSerial:"시리얼 번호 사진을 꼭 올려 주세요. 다른 사진도 있으면 진단이 빨라요.",
+  photoDefault:"사진이 있으면 진단이 훨씬 빨라요. 없으면 건너뛰어도 돼요.",
+  photoNote:"사진은 올릴 때 자동으로 줄여서 보내요. 소음 영상은 접수 후 알림톡의 「추가 자료 제출」로 보내 주세요.",
+  enveReceipt:"ENVE는 수기 간이영수증을 인정하지 않아요. 카드 매출전표, 현금영수증, 세금계산서 중 하나를 올려 주세요.",
+  cannondaleReceipt:"Cannondale은 종이 워런티 카드를 증빙으로 인정하지 않아요.",
+  contactDealer:"진행 상황은 대리점 등록 연락처로 카카오 알림톡(안 되면 문자)을 보내 드려요.",
+  contactSub:"진행 상황은 이 연락처로 카카오 알림톡(안 되면 문자)을 보내 드려요.",
+  doneSub:"접수번호를 꼭 저장해 주세요. 진행 조회와 문의에 쓰여요.",
+  trackSub:"접수할 때 받은 접수번호와 연락처 뒤 4자리를 넣어 주세요. 대리점 접수는 대리점 번호나 소비자 번호 모두 돼요.",
   consent:"<b>개인정보 수집·이용 동의 (경영혁신팀 검토 전 임시 문구)</b><br>· 수집 항목: 성함 또는 대리점명, 연락처, 이메일, 제품 정보, 사진<br>· 이용 목적: A/S·워런티 접수 처리, 진행 안내(알림톡·문자), 제조사 보증 신청<br>· 보유 기간: 처리 완료 후 3년 (관계 법령에 따름)<br>동의하지 않으실 수 있으나, 동의하지 않으면 접수할 수 없습니다."
 };
 
@@ -241,6 +269,7 @@ async function loadData(){
 
 const $=s=>document.querySelector(s);
 const app=$("#app");
+const tx=k=>esc(CONTENT[k]??"");
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const brandOf=id=>BRANDS.find(b=>b.id===id);
 const faqItem=(f,showBrand)=>`<details><summary><span class="tag">${esc(f.t)}</span>${esc(f.q)}</summary><div class="ans">${esc(f.a)}${showBrand&&f.b.length?`<span class="meta">해당 브랜드: ${f.b.map(x=>brandOf(x).name).join(", ")}</span>`:""}</div></details>`;
@@ -300,10 +329,10 @@ function brand(id){
   app.innerHTML=`<div class="wrap">
     <div class="crumb"><a href="#home">지원 홈</a> › ${esc(b.name)}</div>
     <div class="bhead"><div><h1>${esc(b.name)} 지원</h1><p>${esc(b.kind)}</p></div></div>
-    ${b.id==="garmin"?`<div class="note warn" style="margin-top:12px">가민 기기(엣지·랠리 등)는 가민코리아에서 직접 접수해요. Tacx 트레이너만 산바다스포츠에서 접수합니다.</div>`:""}
+    ${b.id==="garmin"?`<div class="note warn" style="margin-top:12px">${tx("garminNote")}</div>`:""}
     <div class="tabs" role="tablist">${tabs.map(([k,n])=>`<button role="tab" data-tab="${k}" aria-selected="${brandTab===k}">${n}</button>`).join("")}</div>
     <div class="panel">${body}</div>
-    <div class="cta"><div><h3>해결되지 않았나요?</h3><p>사진과 증상을 올려 주시면 담당자가 확인 후 알림톡으로 안내해 드려요.</p></div>
+    <div class="cta"><div><h3>${tx("ctaTitle")}</h3><p>${tx("ctaText")}</p></div>
       <a class="btn" href="#apply-${b.id}">A/S 접수하기</a></div>
   </div>`;
   app.querySelectorAll("[data-tab]").forEach(t=>t.onclick=()=>{brandTab=t.dataset.tab;brand(id)});
@@ -324,41 +353,41 @@ function apply(bid){
   const opt=(key,val,title,sub)=>`<button type="button" class="opt" data-k="${key}" data-v="${val}" aria-pressed="${F[key]===val}"><b>${title}</b>${sub?`<small>${sub}</small>`:""}</button>`;
   let html="";
   if(step===0){
-    html=`<h2>누가 접수하나요?</h2><p class="sub">접수하시는 분에 따라 필요한 정보가 달라져요.</p>
+    html=`<h2>누가 접수하나요?</h2><p class="sub">${tx("applyWhoSub")}</p>
       <div class="field"><span class="lbl">접수처<span class="req">*</span></span><div class="choice">
         ${opt("who","consumer","소비자","Tacx 트레이너만 직접 접수")}${opt("who","dealer","대리점","판매 대리점·매장")}${opt("who","hq","본사 직영","직영점 접수")}</div></div>
       <div class="field"><span class="lbl">접수 구분<span class="req">*</span></span><div class="choice">
         ${opt("kind","as","일반 A/S","수리·점검·유상 정비")}${opt("kind","warranty","워런티","제품 결함 보증 신청")}</div>
-        <span class="hint">헷갈리면 일반 A/S로 접수하세요. 본사에서 확인 후 워런티로 바꿔 드려요.</span></div>
+        <span class="hint">${tx("kindHint")}</span></div>
       <div class="field"><span class="lbl">브랜드<span class="req">*</span></span><div class="choice">
         ${F.who==="consumer"?opt("brand","tacx","Tacx","스마트 트레이너"):BRANDS.filter(x=>x.id!=="garmin").map(x=>opt("brand",x.id,x.name,x.kind)).join("")+opt("brand","tacx","Tacx","스마트 트레이너")}</div>
-        ${F.who==="consumer"?`<div class="note" style="margin-top:12px">소비자 직접 접수는 Tacx 트레이너만 가능해요. 다른 브랜드는 구매하신 대리점(또는 가까운 취급 대리점)에서 접수해 주세요. <a href="${esc(CONTENT.dealerFinder)}" target="_blank" rel="noopener">대리점 찾기</a></div>`:""}</div>`;
+        ${F.who==="consumer"?`<div class="note" style="margin-top:12px">${tx("consumerOnly")} <a href="${esc(CONTENT.dealerFinder)}" target="_blank" rel="noopener">대리점 찾기</a></div>`:""}</div>`;
   }else if(step===1){
     const cats=catsFor(b);
     const tips=F.cat?faqFor(F.brand,F.cat).slice(0,3):[];
     html=`<h2>제품과 증상</h2><p class="sub">${b?esc(b.name):"Tacx"} 제품 정보를 알려 주세요.</p>
       <div class="field"><label for="f-serial">프레임(시리얼) 번호${F.serialByPhoto?"":'<span class="req">*</span>'}</label>
         <div class="ac"><input id="f-serial" class="mono" type="text" value="${esc(F.serial)}" placeholder="예: TE14640" autocomplete="off" ${F.serialByPhoto?"disabled":""}><div id="sl" class="dealer-list" hidden></div></div>
-        <span class="hint" id="s-hint">${F.product?`선택한 제품: <b>${esc(F.product)}</b>`:"3자 이상 넣으면 등록된 제품 번호를 찾아 드려요."}</span>
-        <label class="check" style="margin-top:6px"><input id="f-byphoto" type="checkbox" ${F.serialByPhoto?"checked":""}><span>번호를 못 찾겠어요. 다음 단계에서 시리얼 사진을 올릴게요</span></label>
+        <span class="hint" id="s-hint">${F.product?`선택한 제품: <b>${esc(F.product)}</b>`:tx("serialHint")}</span>
+        <label class="check" style="margin-top:6px"><input id="f-byphoto" type="checkbox" ${F.serialByPhoto?"checked":""}><span>${tx("serialByPhoto")}</span></label>
         ${b&&b.img?`<details><summary class="hint" style="cursor:pointer">시리얼 번호는 어디에 있나요?</summary><div class="serialimg" style="margin-top:8px"><img src="img/serial-${b.id}.jpg" alt="${esc(b.name)} 시리얼 위치"></div></details>`:""}</div>
-      <div class="field"><label for="f-model">모델명${F.product||F.serialByPhoto?"":'<span class="req">*</span>'}</label><input id="f-model" type="text" value="${esc(F.model)}" placeholder="예: Synapse Carbon 3, P40, SES 4.5"><span class="hint">시리얼 번호를 목록에서 골랐거나 시리얼 사진을 올리면 비워도 돼요.</span></div>
+      <div class="field"><label for="f-model">모델명${F.product||F.serialByPhoto?"":'<span class="req">*</span>'}</label><input id="f-model" type="text" value="${esc(F.model)}" placeholder="예: Synapse Carbon 3, P40, SES 4.5"><span class="hint">${tx("modelHint")}</span></div>
       <div class="field"><label for="f-buy">구매일${F.kind==="warranty"?'<span class="req">*</span>':""}</label><input id="f-buy" type="date" value="${esc(F.buy)}" max="${new Date().toISOString().slice(0,10)}"></div>
       <div class="field"><span class="lbl">어떤 문제인가요?<span class="req">*</span></span><div class="chips" style="margin:0">${cats.map(c=>`<button type="button" class="chip" data-cat="${c.id}" aria-pressed="${F.cat===c.id}">${c.name}</button>`).join("")}</div>
         ${tips.length?`<div class="tips"><h4>접수 전에 확인해 보세요</h4><ul>${tips.map(t=>`<li><b>${esc(t.q)}</b><br>${esc(t.a.split("\n")[0])}</li>`).join("")}</ul></div>`:""}</div>
-      <div class="field"><label for="f-sym">증상 설명<span class="req">*</span></label><textarea id="f-sym" maxlength="2000" placeholder="언제부터, 어떤 상황에서, 어떻게 문제가 생기는지 적어 주세요.">${esc(F.symptom)}</textarea></div>`;
+      <div class="field"><label for="f-sym">증상 설명<span class="req">*</span></label><textarea id="f-sym" maxlength="2000" placeholder="${tx("symptomPlaceholder")}">${esc(F.symptom)}</textarea></div>`;
   }else if(step===2){
     const need=needPhotos();
     const slot=(k,t)=>{const p=F.photos[k];const nd=need.includes(k);return `<label class="drop ${p?"has":""}" data-slot="${k}"><input type="file" accept="image/*" data-photo="${k}">${p?`<img src="data:image/jpeg;base64,${p}" alt="">`:""}<b>${t}${nd?'<span class="req">*</span>':""}</b><span class="x">${p?"바꾸기":"눌러서 올리기"}</span></label>`};
     const w=F.kind==="warranty";
-    html=`<h2>사진</h2><p class="sub">${w?"워런티 접수는 제품 전체, 시리얼 번호, 문제 부위 사진과 구매 영수증이 꼭 필요해요.":F.serialByPhoto?"시리얼 번호 사진을 꼭 올려 주세요. 다른 사진도 있으면 진단이 빨라요.":"사진이 있으면 진단이 훨씬 빨라요. 없으면 건너뛰어도 돼요."}</p>
+    html=`<h2>사진</h2><p class="sub">${tx(w?"photoWarranty":F.serialByPhoto?"photoSerial":"photoDefault")}</p>
       <div class="photos">${PHOTO_SLOTS.filter(([k])=>k!=="receipt"||true).map(([k,t])=>slot(k,t)).join("")}</div>
-      <p class="hint" style="margin-top:10px">사진은 올릴 때 자동으로 줄여서 보내요. 소음 영상은 접수 후 알림톡의 「추가 자료 제출」로 보내 주세요.</p>
-      ${F.brand==="enve"?`<div class="note warn" style="margin-top:14px">ENVE는 수기 간이영수증을 인정하지 않아요. 카드 매출전표, 현금영수증, 세금계산서 중 하나를 올려 주세요.</div>`:""}
-      ${F.brand==="cannondale"?`<div class="note warn" style="margin-top:14px">Cannondale은 종이 워런티 카드를 증빙으로 인정하지 않아요.</div>`:""}`;
+      <p class="hint" style="margin-top:10px">${tx("photoNote")}</p>
+      ${F.brand==="enve"?`<div class="note warn" style="margin-top:14px">${tx("enveReceipt")}</div>`:""}
+      ${F.brand==="cannondale"?`<div class="note warn" style="margin-top:14px">${tx("cannondaleReceipt")}</div>`:""}`;
   }else if(step===3){
     const c=F.who==="consumer",d=F.who==="dealer";
-    html=`<h2>연락처와 동의</h2><p class="sub">${d?"진행 상황은 대리점 등록 연락처로 카카오 알림톡(안 되면 문자)을 보내 드려요.":"진행 상황은 이 연락처로 카카오 알림톡(안 되면 문자)을 보내 드려요."}</p>
+    html=`<h2>연락처와 동의</h2><p class="sub">${tx(d?"contactDealer":"contactSub")}</p>
       ${d?`<div class="field"><label for="f-dealer">대리점<span class="req">*</span></label><div class="ac"><input id="f-dealer" type="text" value="${esc(F.dealerName)}" placeholder="대리점 이름이나 지역을 넣고 목록에서 골라 주세요" autocomplete="off"><div id="dl" class="dealer-list" hidden></div></div>
           <span class="hint" id="d-hint">${F.dealer?"✓ 선택됨. 대리점 연락처는 등록 정보로 자동 입력돼요.":"목록에 없으면 카카오톡 채널이나 02-555-5199로 알려 주세요."}</span></div>
           <div class="field"><label for="f-staff">매장 담당자</label><input id="f-staff" type="text" value="${esc(F.staff)}"></div>`:""}
@@ -482,7 +511,7 @@ function done(no){
   sending=false;
   const ph=digits(F.phone).slice(-4);
   app.innerHTML=`<div class="wrap narrow"><div class="card done">
-    <h2>접수되었어요</h2><p class="sub" style="margin:6px 0 0">${no?"접수번호를 꼭 저장해 주세요. 진행 조회와 문의에 쓰여요.":"접수번호는 곧 알림톡으로 보내 드려요."}</p>
+    <h2>접수되었어요</h2><p class="sub" style="margin:6px 0 0">${no?tx("doneSub"):"접수번호는 곧 알림톡으로 보내 드려요."}</p>
     ${no?`<div class="ticket">${esc(no)}</div><div class="hint">진행 조회: 접수번호 + 연락처 뒤 4자리${F.who==="dealer"?"(대리점 또는 소비자 번호)":" "+esc(ph)}</div>`:""}
     <ol class="timeline">${TRACK_STEPS.map((s,i)=>`<li class="${i===0?"on now":""}"><b>${s.t}</b><small>${i===0?"방금 · 접수 확인 알림톡이 발송돼요":s.d}</small></li>`).join("")}</ol>
     <div class="nav-btns" style="justify-content:center">${no?`<a class="btn ghost" href="#track-${esc(no)}">진행 조회</a>`:""}<a class="btn" href="#home" id="newf">처음으로</a></div>
@@ -502,7 +531,7 @@ const fmtD=s=>{if(!s)return"";const d=new Date(s.length<=10?s+"T00:00:00":s);ret
 function track(pre){
   app.innerHTML=`<div class="wrap narrow">
     <div class="crumb"><a href="#home">지원 홈</a> › 진행 조회</div>
-    <form class="card" id="tf" novalidate><h2>진행 조회</h2><p class="sub">접수할 때 받은 접수번호와 연락처 뒤 4자리를 넣어 주세요. 대리점 접수는 대리점 번호나 소비자 번호 모두 돼요.</p>
+    <form class="card" id="tf" novalidate><h2>진행 조회</h2><p class="sub">${tx("trackSub")}</p>
       <div class="field"><label for="t-no">접수번호</label><input id="t-no" class="mono" type="text" placeholder="예: 261125-07" value="${esc(pre||"")}"></div>
       <div class="field"><label for="t-ph">연락처 뒤 4자리</label><input id="t-ph" class="mono" type="text" inputmode="numeric" maxlength="4"></div>
       <button class="btn" type="submit" id="tgo">조회</button><div class="err" id="terr" role="alert"></div><div id="tres"></div></form></div>`;
@@ -540,3 +569,5 @@ function route(){
 addEventListener("hashchange",route);
 loadData().then(route);
 </script>
+</body>
+</html>

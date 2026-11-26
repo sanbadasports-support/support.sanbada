@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>support.sanbada 관리</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+/* 관리자 화면: 왼쪽 탭(설정·안내 문구·브랜드·FAQ) + 오른쪽 편집. 저장은 /api/save (Cloudflare Worker → GitHub data/content.json) */
+:root{
+  --bg:#f5f6f7;--surface:#fff;--ink:#15191d;--muted:#5b646d;--line:#e1e4e8;
+  --accent:#0b6b66;--accent-soft:#e3f1ef;--accent-ink:#fff;--warn:#a8501a;--warn-soft:#fbeee4;--ok:#2f7a3b;
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Apple SD Gothic Neo","Pretendard Variable",Pretendard,"Malgun Gothic",system-ui,sans-serif;
+  --r:12px}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1214;--surface:#171b1e;--ink:#eceff1;--muted:#9aa3ab;--line:#2a3035;--accent:#43b5ab;--accent-soft:#16302d;--accent-ink:#06201d;--warn:#f0a070;--warn-soft:#3a2416;--ok:#7cc488;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1214;--surface:#171b1e;--ink:#eceff1;--muted:#9aa3ab;--line:#2a3035;--accent:#43b5ab;--accent-soft:#16302d;--accent-ink:#06201d;--warn:#f0a070;--warn-soft:#3a2416;--ok:#7cc488;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+header{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+header .in{max-width:1100px;margin:0 auto;padding:0 16px;height:56px;display:flex;align-items:center;gap:12px}
+header b{font-weight:700;white-space:nowrap}header small{color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sp{flex:1}
+.btn{font:inherit;font-weight:600;font-size:14px;padding:8px 16px;border-radius:999px;border:1px solid transparent;background:var(--accent);color:var(--accent-ink);cursor:pointer;white-space:nowrap;text-decoration:none}
+.btn.ghost{background:transparent;color:var(--accent);border-color:var(--line)}
+.btn.sm{padding:4px 10px;font-size:13px}.btn.danger{background:transparent;color:var(--warn);border-color:var(--line)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.layout{max-width:1100px;margin:0 auto;padding:20px 16px 80px;display:grid;grid-template-columns:190px 1fr;gap:20px}
+@media (max-width:760px){.layout{grid-template-columns:1fr}nav.tabs{display:flex;overflow-x:auto}}
+nav.tabs button{display:block;width:100%;text-align:left;font:inherit;padding:9px 12px;border:0;border-radius:8px;background:transparent;color:var(--muted);cursor:pointer;white-space:nowrap}
+nav.tabs button[aria-selected="true"]{background:var(--surface);color:var(--ink);font-weight:600}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:12px}
+h2{font-size:20px;margin:0 0 4px}.sub{color:var(--muted);margin:0 0 16px;font-size:14px}
+label.f{display:block;margin-bottom:14px}label.f>span{display:block;font-size:13px;font-weight:600;margin-bottom:4px}
+label.f>em{display:block;font-style:normal;font-size:12px;color:var(--muted);margin-top:3px}
+input[type=text],input[type=url],input[type=number],textarea{width:100%;font:inherit;padding:9px 11px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+textarea{min-height:84px;resize:vertical}
+input:focus,textarea:focus,button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.changed{border-color:var(--accent)!important;background:var(--accent-soft)!important}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips label{display:inline-flex;gap:4px;align-items:center;font-size:13px;padding:3px 10px;border:1px solid var(--line);border-radius:999px;cursor:pointer}
+.chips input{margin:0}
+.faq-item summary{cursor:pointer;display:flex;gap:8px;align-items:baseline;list-style:none}
+.faq-item summary::-webkit-details-marker{display:none}
+.tag{font-size:12px;color:var(--accent);background:var(--accent-soft);padding:1px 7px;border-radius:6px;white-space:nowrap}
+.muted{color:var(--muted);font-size:13px}
+.bar{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);padding:10px 16px;display:none;z-index:6}
+.bar.on{display:block}.bar .in{max-width:1100px;margin:0 auto;display:flex;gap:10px;align-items:center}
+.msg{padding:10px 14px;border-radius:10px;margin-bottom:12px;font-size:14px}
+.msg.ok{background:var(--accent-soft)}.msg.err{background:var(--warn-soft);color:var(--warn)}
+.doc{display:grid;grid-template-columns:1fr 1.4fr auto;gap:6px;margin-bottom:6px}
+@media (max-width:560px){.doc{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><div class="in"><b>support.sanbada 관리</b><small id="who"></small><span class="sp"></span>
+  <a class="btn ghost" id="siteLink" target="_blank" rel="noopener" href="https://support.sanbadasports.co.kr/">사이트 보기</a></div></header>
+<div class="layout">
+  <nav class="tabs" role="tablist" id="tabs"></nav>
+  <main id="main"><div class="card">불러오는 중…</div></main>
+</div>
+<div class="bar" id="bar"><div class="in"><span id="dirty" class="muted"></span><span class="sp"></span>
+  <button class="btn ghost" id="undo">변경 취소</button><button class="btn" id="save">저장하고 사이트에 반영</button></div></div>
+<script>
+/* ---------- 설정 키 이름 (관리 화면에 보이는 이름) ---------- */
+const BASIC=[
+ ["notice","맨 위 공지 띠","비우면 공지가 안 보여요."],["phone","대표 전화",""],["hours","운영 시간",""],["address","주소",""],
+ ["heroTitle","첫 화면 큰 제목",""],["heroText","첫 화면 설명",""],["dealerFinder","대리점 찾기 링크","https:// 로 시작"],
+ ["consent","개인정보 동의 문구","줄바꿈은 <br>, 굵게는 <b>…</b>"]];
+const TEXTS=[
+ ["ctaTitle","브랜드 페이지 아래 상자 제목"],["ctaText","브랜드 페이지 아래 상자 설명"],["garminNote","GARMIN 페이지 안내"],
+ ["applyWhoSub","접수 1단계 설명"],["kindHint","접수 구분 도움말"],["consumerOnly","소비자 접수 제한 안내 (Tacx만)"],
+ ["serialHint","시리얼 입력칸 도움말"],["serialByPhoto","시리얼 못 찾음 체크 문구"],["modelHint","모델명 도움말"],
+ ["symptomPlaceholder","증상 설명칸 예시 문구"],["photoWarranty","사진 단계 설명 (워런티)"],["photoSerial","사진 단계 설명 (시리얼 사진)"],
+ ["photoDefault","사진 단계 설명 (일반)"],["photoNote","사진 단계 아래 안내"],["enveReceipt","ENVE 영수증 안내"],
+ ["cannondaleReceipt","Cannondale 증빙 안내"],["contactDealer","연락처 단계 설명 (대리점)"],["contactSub","연락처 단계 설명 (소비자·직영)"],
+ ["doneSub","접수 완료 화면 안내"],["trackSub","진행 조회 화면 설명"]];
+const CATS=[["frame","프레임·도장"],["drive","변속·브레이크"],["wheel","휠·타이어"],["noise","소음·유격"],["elec","충전·모터·에러"],["fold","접이 구조"],["parts","부품 구매"],["etc","기타"]];
+const TAGS=["A/S·수리","워런티","접수 방법","진행 문의","제품·부품","정품등록","타사 안내"];
+const TABS=[["basic","기본 설정"],["texts","화면 안내 문구"],["brands","브랜드·자료"],["faq","자주 발생하는 문제"],["history","변경 기록"]];
+
+let DATA=null, ORIG="", SHA="", tab="basic", faqFilter="";
+const $=s=>document.querySelector(s), esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const api=async(p,o={})=>{const r=await fetch(p,{...o,headers:{"Content-Type":"application/json"},credentials:"same-origin"});const j=await r.json().catch(()=>({}));if(!r.ok)throw Object.assign(new Error(j.error||("오류 "+r.status)),{status:r.status,body:j});return j};
+
+async function load(){
+  try{const j=await api("/api/content");DATA=j.content;SHA=j.sha;ORIG=JSON.stringify(DATA);$("#who").textContent=j.user?" · "+j.user:"";
+    if(j.site)$("#siteLink").href=j.site;render()}
+  catch(e){$("#main").innerHTML=`<div class="msg err">내용을 불러오지 못했어요: ${esc(e.message)}</div>`}
+}
+function dirty(){const d=JSON.stringify(DATA)!==ORIG;$("#bar").classList.toggle("on",d);$("#dirty").textContent=d?"저장하지 않은 변경이 있어요":"";return d}
+addEventListener("beforeunload",e=>{if(DATA&&dirty()){e.preventDefault();e.returnValue=""}});
+
+function render(){
+  $("#tabs").innerHTML=TABS.map(([k,n])=>`<button role="tab" data-t="${k}" aria-selected="${tab===k}">${n}</button>`).join("");
+  $("#tabs").querySelectorAll("button").forEach(b=>b.onclick=()=>{tab=b.dataset.t;render()});
+  const S=DATA.settings;
+  let h="";
+  if(tab==="basic"){
+    h=`<div class="card"><h2>기본 설정</h2><p class="sub">사이트 전체에 쓰이는 연락처·첫 화면 문구예요.</p>
+      ${BASIC.map(([k,n,em])=>field("s:"+k,n,S[k],em,k==="consent"||k==="heroText"))}</div>`;
+  }else if(tab==="texts"){
+    h=`<div class="card"><h2>화면 안내 문구</h2><p class="sub">접수·조회 화면의 도움말과 안내예요. 비우면 그 문구가 안 보여요.</p>
+      ${TEXTS.map(([k,n])=>field("s:"+k,n,S[k],"",(S[k]||"").length>40))}</div>`;
+  }else if(tab==="brands"){
+    h=`<p class="sub">브랜드 이름·설명·순서와 「매뉴얼·자료」 탭의 링크를 고쳐요. 브랜드 추가·삭제는 접수 자동화와 연결돼 있어 개발 수정이 필요해요.</p>`+
+      DATA.brands.map((b,i)=>`<div class="card"><div class="row" style="margin-bottom:10px"><h2 style="margin:0">${esc(b.name)}</h2><span class="muted">${esc(b.id)}</span></div>
+        <div class="row" style="align-items:flex-start">
+          <label class="f" style="flex:2;min-width:180px"><span>이름</span><input type="text" data-p="b:${i}:name" value="${esc(b.name)}"></label>
+          <label class="f" style="flex:3;min-width:200px"><span>설명</span><input type="text" data-p="b:${i}:kind" value="${esc(b.kind)}"></label>
+          <label class="f" style="width:90px"><span>순서</span><input type="number" data-p="b:${i}:order" value="${esc(b.order)}"></label></div>
+        <span style="font-size:13px;font-weight:600">매뉴얼·자료</span><p class="muted" style="margin:2px 0 8px">링크를 비우면 「자료 준비 중」으로 보여요. PDF는 구글 드라이브 공유 링크를 붙여 넣으면 돼요.</p>
+        ${(b.docs||[]).map((d,j)=>`<div class="doc"><input type="text" data-p="d:${i}:${j}:t" value="${esc(d.t)}" placeholder="자료 이름"><input type="url" data-p="d:${i}:${j}:u" value="${esc(d.u)}" placeholder="https://"><button class="btn danger sm" data-del-doc="${i}:${j}">삭제</button></div>`).join("")}
+        <button class="btn ghost sm" data-add-doc="${i}">+ 자료 추가</button></div>`).join("");
+  }else if(tab==="faq"){
+    const list=DATA.faq.map((f,i)=>[f,i]).filter(([f])=>!faqFilter||(f.q+f.a).includes(faqFilter)||(f.b||[]).some(x=>x.includes(faqFilter)));
+    h=`<div class="row" style="margin-bottom:12px"><h2 style="margin:0">자주 발생하는 문제·FAQ</h2><span class="muted">${DATA.faq.length}개</span><span class="sp"></span>
+        <input type="text" id="ff" placeholder="찾기 (질문·답·브랜드)" value="${esc(faqFilter)}" style="max-width:240px"><button class="btn" id="addFaq">+ 새 항목</button></div>
+      <p class="sub">브랜드를 하나도 고르지 않으면 모든 브랜드 공통이고 첫 화면에도 보여요. 위쪽일수록 먼저 보여요.</p>`+
+      list.map(([f,i])=>`<details class="card faq-item" ${f._open?"open":""} data-i="${i}"><summary><span class="tag">${esc(f.t||"분류 없음")}</span><b style="flex:1">${esc(f.q||"(새 질문)")}</b>
+          <span class="muted">${(f.b||[]).length?esc(f.b.map(id=>(DATA.brands.find(b=>b.id===id)||{name:id}).name).join(", ")):"공통"}</span></summary>
+        <div style="margin-top:14px">
+          ${field("f:"+i+":q","질문",f.q)}${field("f:"+i+":a","답 (줄바꿈 그대로 보여요)",f.a,"",true)}
+          <label class="f"><span>꼬리표</span><input type="text" list="tags" data-p="f:${i}:t" value="${esc(f.t)}"></label>
+          <div class="f" style="margin-bottom:14px"><span style="display:block;font-size:13px;font-weight:600;margin-bottom:4px">브랜드</span><div class="chips">
+            ${DATA.brands.map(b=>`<label><input type="checkbox" data-fb="${i}:${b.id}" ${(f.b||[]).includes(b.id)?"checked":""}>${esc(b.name)}</label>`).join("")}</div></div>
+          <div class="f" style="margin-bottom:14px"><span style="display:block;font-size:13px;font-weight:600;margin-bottom:4px">증상 분류 (접수 화면의 「접수 전에 확인해 보세요」에 쓰여요)</span><div class="chips">
+            ${CATS.map(([c,n])=>`<label><input type="checkbox" data-fc="${i}:${c}" ${(f.c||[]).includes(c)?"checked":""}>${n}</label>`).join("")}</div></div>
+          <div class="row"><button class="btn ghost sm" data-mv="${i}:-1">위로</button><button class="btn ghost sm" data-mv="${i}:1">아래로</button><span class="sp"></span><button class="btn danger sm" data-del-faq="${i}">이 항목 삭제</button></div>
+        </div></details>`).join("")+`<datalist id="tags">${TAGS.map(t=>`<option value="${t}">`).join("")}</datalist>`;
+  }else if(tab==="history"){
+    h=`<div class="card"><h2>변경 기록</h2><p class="sub">저장할 때마다 누가 언제 바꿨는지 남아요.</p><div id="hist">불러오는 중…</div></div>`;
+    api("/api/history").then(j=>{$("#hist").innerHTML=j.items.length?`<table style="width:100%;border-collapse:collapse;font-size:14px">${j.items.map(x=>`<tr style="border-top:1px solid var(--line)"><td style="padding:8px 8px 8px 0;white-space:nowrap" class="muted">${esc(new Date(x.date).toLocaleString("ko-KR"))}</td><td style="padding:8px 0">${esc(x.message)}</td></tr>`).join("")}</table>`:"기록이 없어요."})
+      .catch(e=>{$("#hist").textContent="불러오지 못했어요: "+e.message});
+  }
+  $("#main").innerHTML=h;bind();dirty();
+}
+function field(p,label,val,em,area){
+  return `<label class="f"><span>${esc(label)}</span>${area?`<textarea data-p="${p}">${esc(val)}</textarea>`:`<input type="text" data-p="${p}" value="${esc(val)}">`}${em?`<em>${esc(em)}</em>`:""}</label>`}
+function setP(p,v){const a=p.split(":");
+  if(a[0]==="s")DATA.settings[a[1]]=v;
+  else if(a[0]==="b")DATA.brands[+a[1]][a[2]]=a[2]==="order"?Number(v)||0:v;
+  else if(a[0]==="d")DATA.brands[+a[1]].docs[+a[2]][a[3]]=v.trim();
+  else if(a[0]==="f")DATA.faq[+a[1]][a[2]]=v;}
+function bind(){
+  const m=$("#main");
+  m.querySelectorAll("[data-p]").forEach(e=>e.oninput=()=>{setP(e.dataset.p,e.value);dirty();
+    if(e.dataset.p.startsWith("f:")&&e.dataset.p.endsWith(":q")){const s=e.closest("details").querySelector("summary b");s.textContent=e.value||"(새 질문)"}});
+  m.querySelectorAll("[data-fb]").forEach(e=>e.onchange=()=>{const [i,b]=e.dataset.fb.split(":");const f=DATA.faq[+i];f.b=(f.b||[]).filter(x=>x!==b);if(e.checked)f.b.push(b);f.b.sort((x,y)=>DATA.brands.findIndex(z=>z.id===x)-DATA.brands.findIndex(z=>z.id===y));dirty()});
+  m.querySelectorAll("[data-fc]").forEach(e=>e.onchange=()=>{const [i,c]=e.dataset.fc.split(":");const f=DATA.faq[+i];f.c=(f.c||[]).filter(x=>x!==c);if(e.checked)f.c.push(c);dirty()});
+  m.querySelectorAll("details[data-i]").forEach(d=>d.ontoggle=()=>{Object.defineProperty(DATA.faq[+d.dataset.i],"_open",{value:d.open,enumerable:false,configurable:true,writable:true})});
+  m.querySelectorAll("[data-mv]").forEach(e=>e.onclick=()=>{const [i,dir]=e.dataset.mv.split(":").map(Number);const j=i+dir;if(j<0||j>=DATA.faq.length)return;[DATA.faq[i],DATA.faq[j]]=[DATA.faq[j],DATA.faq[i]];render()});
+  m.querySelectorAll("[data-del-faq]").forEach(e=>e.onclick=()=>{const i=+e.dataset.delFaq;if(!confirm(`「${DATA.faq[i].q}」 항목을 지울까요? 저장하기 전까지는 「변경 취소」로 되돌릴 수 있어요.`))return;DATA.faq.splice(i,1);render()});
+  m.querySelectorAll("[data-add-doc]").forEach(e=>e.onclick=()=>{const b=DATA.brands[+e.dataset.addDoc];(b.docs=b.docs||[]).push({t:"",u:""});render()});
+  m.querySelectorAll("[data-del-doc]").forEach(e=>e.onclick=()=>{const [i,j]=e.dataset.delDoc.split(":").map(Number);DATA.brands[i].docs.splice(j,1);render()});
+  const ff=$("#ff");if(ff){ff.oninput=()=>{faqFilter=ff.value.trim();const pos=ff.selectionStart;render();const n=$("#ff");n.focus();n.setSelectionRange(pos,pos)}}
+  const af=$("#addFaq");if(af)af.onclick=()=>{const f={q:"",a:"",t:"A/S·수리",b:[],c:["etc"]};Object.defineProperty(f,"_open",{value:true,enumerable:false,configurable:true,writable:true});DATA.faq.unshift(f);faqFilter="";render()};
+}
+$("#undo").onclick=()=>{if(confirm("저장하지 않은 변경을 모두 되돌릴까요?")){DATA=JSON.parse(ORIG);render()}};
+$("#save").onclick=async()=>{
+  const bad=DATA.faq.findIndex(f=>!f.q.trim()||!f.a.trim());
+  if(bad>=0){alert("질문이나 답이 비어 있는 FAQ가 있어요. 채우거나 지워 주세요.");tab="faq";faqFilter="";render();return}
+  const btn=$("#save");btn.disabled=true;btn.textContent="저장 중…";
+  try{
+    const j=await api("/api/save",{method:"POST",body:JSON.stringify({content:DATA,sha:SHA,summary:summary()})});
+    SHA=j.sha;ORIG=JSON.stringify(DATA);dirty();
+    $("#main").insertAdjacentHTML("afterbegin",`<div class="msg ok">저장했어요. 1~2분 뒤 사이트에 반영돼요.</div>`);scrollTo(0,0);
+  }catch(e){
+    if(e.status===409)$("#main").insertAdjacentHTML("afterbegin",`<div class="msg err">다른 사람이 먼저 저장했어요. 내 변경을 메모해 두고 새로고침한 뒤 다시 고쳐 주세요.</div>`);
+    else $("#main").insertAdjacentHTML("afterbegin",`<div class="msg err">저장하지 못했어요: ${esc(e.message)}</div>`);scrollTo(0,0);
+  }finally{btn.disabled=false;btn.textContent="저장하고 사이트에 반영"}
+};
+function summary(){const o=JSON.parse(ORIG),c=[];
+  const ks=new Set([...Object.keys(o.settings),...Object.keys(DATA.settings)]);
+  ks.forEach(k=>{if((o.settings[k]??"")!==(DATA.settings[k]??"")){const n=[...BASIC,...TEXTS].find(x=>x[0]===k);c.push(n?n[1]:k)}});
+  if(JSON.stringify(o.brands)!==JSON.stringify(DATA.brands))c.push("브랜드·자료");
+  const oq=o.faq.map(f=>f.q),nq=DATA.faq.map(f=>f.q);
+  const add=nq.filter(q=>!oq.includes(q)).length,del=oq.filter(q=>!nq.includes(q)).length;
+  if(add)c.push(`FAQ ${add}개 추가`);if(del)c.push(`FAQ ${del}개 삭제`);
+  if(!add&&!del&&JSON.stringify(o.faq)!==JSON.stringify(DATA.faq))c.push("FAQ 수정");
+  return c.join(", ").slice(0,200)||"내용 수정"}
+load();
+</script>
+</body>
+</html>
