@@ -7,6 +7,7 @@ workers_dev = true
 
 [vars]
 ALLOWED_ORIGINS = "https://support.sanbadasports.co.kr,https://sanbadasports-support.github.io"
+SUBMIT_KEY = "sbs-as-2026"   # Make 접수 필터 값(비밀 아님, 웹훅 주소가 비밀)
 
 # IP당 횟수 제한 (Workers Rate Limiting, period는 10 또는 60초만 가능)
 [[ratelimits]]
@@ -26,5 +27,4 @@ simple = { limit = 40, period = 60 }
 
 # 비밀값(대시보드 → Worker → 설정 → 변수 및 비밀 → 「암호화」로 추가, 이 파일에 적지 말 것):
 #   HOOK_SUBMIT, HOOK_LOOKUP  : 새로 발급한 Make 웹훅 주소
-#   SUBMIT_KEY                : Make 접수 시나리오 필터 값
 #   TURNSTILE_SECRET          : Turnstile 비밀 키
